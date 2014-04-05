@@ -22,31 +22,50 @@ class Unit( object ):
         return Unit.units[0]
     
     @classmethod
-    def action( cls, action_terrain ):
-        if cls.active().terrain is action_terrain or action_terrain.contains_unit():
+    def action( cls, event ):
+        active = cls.active()
+        action = {
+            pygame.K_UP:    active.action_up,
+            pygame.K_DOWN:  active.action_down,
+            pygame.K_LEFT:  active.action_left,
+            pygame.K_RIGHT: active.action_right,
+            pygame.K_SPACE: active.action_skip,
+            pygame.K_a:     active.action_attack,
+            pygame.K_d:     active.action_defend
+        }
+
+        return action[ event.key ]()
+
+    def action_direction( self, action_terrain ):
+        if action_terrain.contains_unit( type(self) ):
             return False
         else:
             Unit( action_terrain )
             return True
 
-    @classmethod
-    def action_up( cls, event ):
-        return cls.action( cls.active().terrain.up_terrain() )
+    def action_up( self ):
+        action_terrain = self.terrain.up_terrain()
+        return self.action_direction( action_terrain )
 
-    @classmethod
-    def action_down( cls, event ):
-        return cls.action( cls.active().terrain.down_terrain() )
+    def action_down( self ):
+        action_terrain = self.terrain.down_terrain()
+        return self.action_direction( action_terrain )
 
-    @classmethod
-    def action_left( cls, event ):
-        return cls.action( cls.active().terrain.left_terrain() )
+    def action_left( self ):
+        action_terrain = self.terrain.left_terrain()
+        return self.action_direction( action_terrain )
 
-    @classmethod
-    def action_right( cls, event ):
-        return cls.action( cls.active().terrain.right_terrain() )
+    def action_right( self ):
+        action_terrain = self.terrain.right_terrain()
+        return self.action_direction( action_terrain )
     
-    @classmethod
-    def action_skip( cls, event ):
+    def action_skip( self ):
+        return True
+
+    def action_attack( self ):
+        return True
+
+    def action_defend( self ):
         return True
 
     def __init__( self, terrain ):
@@ -60,11 +79,11 @@ class Unit( object ):
         self.terrain.remove_unit( self )
         Unit.units.remove(self)
 
-    def is_surrounded( self ):
-        return (self.terrain.up_terrain()   .contains_unit() and
-                self.terrain.down_terrain() .contains_unit() and
-                self.terrain.left_terrain() .contains_unit() and
-                self.terrain.right_terrain().contains_unit()    )
+    def is_surrounded( self, unit_type=None ):
+        return (self.terrain.up_terrain()   .contains_unit(unit_type) and
+                self.terrain.down_terrain() .contains_unit(unit_type) and
+                self.terrain.left_terrain() .contains_unit(unit_type) and
+                self.terrain.right_terrain().contains_unit(unit_type)    )
 
     def draw_number( self, screen ):
         myfont = pygame.font.SysFont("monospace", 20)

@@ -19,8 +19,8 @@ def turn_end(grid):
         unit.growth += 1
         if unit.growth < 1:
             dlist.append(unit)
-    for something in dlist:
-       something.delete()
+    for unit in dlist:
+       unit.delete()
 
 def do_nothing( event ):
     return
@@ -43,15 +43,17 @@ def mouse_button_down( event ):
 def key_down( event ):
 
     # NOTE: Throwaway code to test highlighting and controls
-    action = {
-        pygame.K_UP:    u.Unit.action_up,
-        pygame.K_DOWN:  u.Unit.action_down,
-        pygame.K_LEFT:  u.Unit.action_left,
-        pygame.K_RIGHT: u.Unit.action_right,
-        pygame.K_SPACE: u.Unit.action_skip
-    }
+    action = [
+        pygame.K_UP,
+        pygame.K_DOWN,
+        pygame.K_LEFT,
+        pygame.K_RIGHT,
+        pygame.K_SPACE,
+        pygame.K_a,
+        pygame.K_d
+    ]
     if event.key in action:
-        if action[ event.key ]( event ):
+        if u.Unit.action( event ):
             u.Unit.activate_next()
 
     if event.key == pygame.K_RETURN:
