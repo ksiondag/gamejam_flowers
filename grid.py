@@ -63,6 +63,14 @@ def collision( grid, pos ):
     
     return None
 
+def draw_number( screen, number ):
+    # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
+    myfont = pygame.font.SysFont("monospace", 15)
+
+    # render text
+    label = myfont.render("%i" % number, 1, BLACK)
+    screen.blit(label, (100, 100))
+
 def main():
     # Initialize screen
     size = (pixels(ROWS, HEIGHT, MARGIN), pixels(COLUMNS, WIDTH, MARGIN))
@@ -102,6 +110,8 @@ def main():
         for row in range(ROWS):
             for column in range(COLUMNS):
                 pygame.draw.rect( screen, grid[row][column].color, grid[row][column] )
+
+        draw_number( screen, 0 )
 
         pygame.display.flip()
 
