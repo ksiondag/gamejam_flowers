@@ -26,6 +26,7 @@ class Square( pygame.Rect ):
     def __init__( self, left, top, width, height ):
         pygame.Rect.__init__(self, left, top, width, height)
         self.color = GREEN
+        self.growth = 0
 
     def change_color( self ):
         if self.color == GREEN:
@@ -106,4 +107,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+    pygame.quit()
 
