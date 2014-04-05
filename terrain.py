@@ -25,19 +25,21 @@ class Terrain( pygame.Rect ):
     active =    None
     highlight = None
 
-
     def __init__( self, left, top, width, height, row, col ):
         pygame.Rect.__init__(self, left, top, width, height)
         self.pos = (row, col)
         self.color = colors.WHITE
-        self.growth = 0
 
         self.row = row
         self.col = col
 
-        # NOTE: currently placeholders
+        # Terrain will contain units (flowers, rabbits, cake rolls, etc.)
+        self.units = []
+
+        # NOTE: depracated
         self.seed = False
         self.hit = 0
+        self.growth = 0
 
     def change_color( self ):
         if self.color == colors.GREEN:
