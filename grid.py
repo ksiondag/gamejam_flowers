@@ -24,16 +24,19 @@ MARGIN = 5
 ROWS    = 10
 COLUMNS = 10
 
-class Square( pygame.Rect ):
+class Terrain( pygame.Rect ):
 
-    activeRow = None
-    activeColumn = None
+    grid = None
+    active = None
 
-    def __init__( self, left, top, width, height ):
+    def __init__( self, left, top, width, height, row, col ):
         pygame.Rect.__init__(self, left, top, width, height)
+        self.pos = (row, col)
         self.color = WHITE
-        self.active = False
         self.growth = 0
+
+        self.row = row
+        self.col = col
 
         # NOTE: currently placeholders
         self.seed = False
@@ -48,57 +51,81 @@ class Square( pygame.Rect ):
     def is_plant( self ):
         return self.color == GREEN
     
+    def up_terrain( self, grid ):
+        row = self.row - 1
+        col = self.col
+        if row < 0:
+            return self
+        else:
+            return grid[row][col]
+
+    def down_terrain( self, grid ):
+        row = self.row + 1
+        col = self.col
+        if row >= len(grid):
+            return self
+        else:
+            return grid[row][col]
+
+    def left_terrain( self, grid ):
+        row = self.row
+        col = self.col - 1
+        if col < 0:
+            return self
+        else:
+            return grid[row][col]
+
+    def right_terrain( self, grid ):
+        row = self.row
+        col = self.col + 1
+        if col >= len(grid[row]):
+            return self
+        else:
+            return grid[row][col]
+
+    def set_active( self ):
+        Terrain.active = self
+
+    def draw( self, screen ):
+        pygame.draw.rect( screen, self.color, self )
+        self.draw_number( screen )
+
+        if self is Terrain.active:
+            active_border(screen, self)
+    
     def draw_number( self, screen ):
-        # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
         myfont = pygame.font.SysFont("monospace", 20)
 
         # render text
         label = myfont.render("%i" % self.growth, 1, BLACK)
         screen.blit(label, (self))
-    
+
 def pixels( count, length, distance ):
     return length*count + distance*(count+1)
-
-def init_grid( rows, columns, height, width, margin ):
-    grid = []
-
-    # Draw grid
-    x = margin
-    y = margin
-    for row in range(rows):
-        grid.append( [] )
-        for column in range(columns):
-            grid[row].append( Square( x, y, width, height ) )
-            x += width + margin
-        y += height + margin
-        x = margin
-
-    return grid
 
 def collision( grid, pos ):
     
     for row in range(len(grid)):
-        for column in range(len(grid[row])):
-            rect = grid[row][column]
+        for col in range(len(grid[row])):
+            rect = grid[row][col]
             if rect.collidepoint( pos ):
-                return row, column
+                return row, col
     
     return None
 
 def turn_end(grid):
     for row in range(len(grid)):
-        for column in range(len(grid[row])):
+        for col in range(len(grid[row])):
             damage(grid)
-            grid[row][column].hit = 0
+            grid[row][col].hit = 0
             
-            #BUG currently acts as though color is default color for all
-            if grid[row][column].color != WHITE:
-                grid[row][column].growth += 1
+            if grid[row][col].color != WHITE:
+                grid[row][col].growth += 1
 
 def damage(grid):
     for row in range(len(grid)):
-        for column in range(len(grid[row])):
-            grid[row][column].growth -= grid[row][column].hit
+        for col in range(len(grid[row])):
+            grid[row][col].growth -= grid[row][col].hit
 
 def active_border( screen, square ):
     pygame.draw.rect( screen, RED, (square.left-MARGIN, square.top, MARGIN, HEIGHT) )
@@ -116,40 +143,43 @@ def quit( grid, event ):
 def mouse_button_down( grid, event ):
     result = collision( grid, event.pos )
     if result is not None:
-        row, column = result
-        grid[row][column].change_color()
+        row, col = result
+        grid[row][col].change_color()
 
 def key_down( grid, event ):
     # TODO: some stuff
-    if event.key == pygame.K_UP:
-        if Square.activeRow > 0:
-            grid[Square.activeRow][Square.activeColumn].active = False
-            Square.activeRow -= 1
-            grid[Square.activeRow][Square.activeColumn].active = True
-
-    elif event.key == pygame.K_DOWN:
-        if Square.activeRow < ROWS -1:
-            grid[Square.activeRow][Square.activeColumn].active = False
-            Square.activeRow += 1
-            grid[Square.activeRow][Square.activeColumn].active = True
-
-    elif event.key == pygame.K_LEFT:
-        if Square.activeColumn > 0:
-            grid[Square.activeRow][Square.activeColumn].active = False
-            Square.activeColumn -= 1
-            grid[Square.activeRow][Square.activeColumn].active = True
-
-    elif event.key == pygame.K_RIGHT:
-        if Square.activeColumn < COLUMNS-1:
-            grid[Square.activeRow][Square.activeColumn].active = False
-            Square.activeColumn += 1
-            grid[Square.activeRow][Square.activeColumn].active = True
+    movement = {
+        pygame.K_UP:    Terrain.active.up_terrain(grid),
+        pygame.K_DOWN:  Terrain.active.down_terrain(grid),
+        pygame.K_LEFT:  Terrain.active.left_terrain(grid),
+        pygame.K_RIGHT: Terrain.active.right_terrain(grid)
+    }
+    if event.key in movement:
+        movement[ event.key ].set_active()
 
     elif event.key == pygame.K_q:
-        grid[Square.activeRow][Square.activeColumn].seed = True
+        Terrain.active.seed = True
 
     elif event.key == pygame.K_RETURN:
         turn_end(grid)
+
+def init_grid( n_rows, n_cols, height, width, margin ):
+    grid = []
+
+    # Grid spacing
+    x = margin
+    y = margin
+    for row_index in range(n_rows):
+        row = []
+        for col_index in range(n_cols):
+            row.append(Terrain(x, y, width, height, row_index, col_index))
+            x += width + margin
+        y += height + margin
+        x = margin
+
+        grid.append( row )
+
+    return grid
     
 def main():
     # Initialize screen
@@ -166,10 +196,7 @@ def main():
     pygame.display.flip()
 
     grid = init_grid(ROWS, COLUMNS, HEIGHT, WIDTH, MARGIN)
-    grid[0][0].active = True
-
-    Square.activeRow = 0
-    Square.activeColumn = 0
+    grid[0][0].set_active()
 
     # Event managing dictionary
     # For events we do not process, we are defaulting to doing nothing
@@ -185,18 +212,11 @@ def main():
         for event in pygame.event.get():
             process[event.type]( grid, event )
 
-        # Reinitialize screen 
-        #screen.blit(background, (0,0))
+        # Redraw screen
         screen.fill(BLACK)
-
-        for row in range(ROWS):
-            for column in range(COLUMNS):
-                pygame.draw.rect( screen, grid[row][column].color, grid[row][column] )
-                grid[row][column].draw_number( screen )
-
-                if grid[row][column].active:
-                    active_border(screen, grid[row][column])
-
+        for row in grid:
+            for terrain in row:
+                terrain.draw(screen)
         pygame.display.flip()
 
 if __name__ == '__main__':

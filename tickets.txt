@@ -18,11 +18,10 @@ Prototypes:
         Geometry flowers
 
 Structure:
-    Process events dictionary - Rory
+    DONE Process events dictionary
+    DONE Active grid unit setup improvement
     Drawables
     Have quit event call quit method
-
-    Active grid unit setup improvement
 
 Bugs:
 
