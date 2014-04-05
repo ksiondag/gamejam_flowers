@@ -33,7 +33,7 @@ class Terrain( pygame.Rect ):
         self.row = row
         self.col = col
 
-        # Terrain will contain units (flowers, rabbits, cake rolls, etc.)
+        # Terrain can contain units (flowers, rabbits, cake rolls, etc.)
         self.units = []
 
         # NOTE: depracated
