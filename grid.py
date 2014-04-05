@@ -120,8 +120,11 @@ def main():
     grid[0][0].active = True
     activeRow = 0
     activeColumn = 0
-
-    while True:
+    plants = []
+    plants.append(grid[0][0])
+    #for plant in plants:
+     #   plant.active = True
+    while True:    
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
@@ -130,35 +133,41 @@ def main():
                 if result is not None:
                     row, column = result
                     grid[row][column].change_color()
-
             elif event.type == pygame.KEYUP:
-                # TODO: some stuff
+                  # TODO: some stuff
                 if event.key == pygame.K_UP:
                     if activeRow > 0:
+                        #plant.active = False
                         grid[activeRow][activeColumn].active = False
                         activeRow -= 1
                         grid[activeRow][activeColumn].active = True
                 elif event.key == pygame.K_DOWN:
                     if activeRow < ROWS -1:
+                    #plant.active = False
                         grid[activeRow][activeColumn].active = False
                         activeRow += 1
                         grid[activeRow][activeColumn].active = True
                 elif event.key == pygame.K_LEFT:
                     if activeColumn > 0:
+                    #plant.active = False
                         grid[activeRow][activeColumn].active = False
                         activeColumn -= 1
                         grid[activeRow][activeColumn].active = True
                 elif event.key == pygame.K_RIGHT:
                     if activeColumn < COLUMNS-1:
+                    #plant.active = False
                         grid[activeRow][activeColumn].active = False
                         activeColumn += 1
                         grid[activeRow][activeColumn].active = True
                 elif event.key == pygame.K_q:
                     grid[activeRow][activeColumn].seed = True
-                
+                    plants.append(grid[activeRow][activeColumn])
+                #If a plant is killed
+                    #plants.remove(square the plant is in)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     turn_end(grid)
+        
 
         # Reinitialize screen 
         #screen.blit(background, (0,0))
