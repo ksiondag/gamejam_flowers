@@ -42,6 +42,10 @@ class Terrain( pygame.Rect ):
         for unit in self.units:
             if type is None or type==type(unit):
                 return True
+    
+    def say_unit(self):
+        for unit in self.units:
+            return unit
 
     def up_terrain( self ):
         row = self.row - 1

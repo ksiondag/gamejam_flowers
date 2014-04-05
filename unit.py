@@ -25,7 +25,10 @@ class Unit( object ):
     def action( cls, action_terrain ):
         if cls.active().terrain is action_terrain or action_terrain.contains_unit():
             return False
+        elif Terrain.say_unit(cls.active().terrain).growth < 2:
+            return False
         else:
+            Terrain.say_unit(cls.active().terrain).growth -= 2
             Unit( action_terrain )
             return True
 
