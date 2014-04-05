@@ -44,6 +44,10 @@ class Unit( object ):
     @classmethod
     def action_right( cls, event ):
         return cls.action( cls.active().terrain.right_terrain() )
+    
+    @classmethod
+    def action_skip( cls, event ):
+        return True
 
     def __init__( self, terrain ):
         Unit.units.appendleft( self )
@@ -54,7 +58,7 @@ class Unit( object ):
 
     def __del__( self ):
         self.terrain.remove_unit( self )
-        Unit.units.remove( self )
+        Unit.units.remove(self)
 
     def is_surrounded( self ):
         return (self.terrain.up_terrain()   .contains_unit() and

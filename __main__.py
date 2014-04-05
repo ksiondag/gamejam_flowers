@@ -12,8 +12,15 @@ import unit as u
 TITLE = 'Units activate!'
 
 def turn_end(grid):
+    dlist = []
     for unit in u.Unit.units:
+        if unit.is_surrounded():
+            unit.growth -= 2
         unit.growth += 1
+        if unit.growth < 1:
+            dlist.append(unit)
+    for something in dlist:
+       something.__del__()
 
 def do_nothing( event ):
     return
@@ -40,7 +47,8 @@ def key_down( event ):
         pygame.K_UP:    u.Unit.action_up,
         pygame.K_DOWN:  u.Unit.action_down,
         pygame.K_LEFT:  u.Unit.action_left,
-        pygame.K_RIGHT: u.Unit.action_right
+        pygame.K_RIGHT: u.Unit.action_right,
+        pygame.K_SPACE: u.Unit.action_skip
     }
     if event.key in action:
         if action[ event.key ]( event ):
