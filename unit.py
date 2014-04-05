@@ -4,55 +4,81 @@ from collections import deque
 import pygame
 
 import colors
+from terrain import Terrain
+
 
 class Unit( object ):
     
     units  = deque()
-    active = None
 
     @classmethod
     def activate_next( cls ):
         Unit.units.rotate(1)
+        while Unit.active().is_surrounded():
+            Unit.units.rotate(1)
 
     @classmethod
     def active( cls ):
         return Unit.units[0]
+    
+    @classmethod
+    def action( cls, action_terrain ):
+        if cls.active().terrain is action_terrain or action_terrain.contains_unit():
+            return False
+        else:
+            Unit( action_terrain )
+            return True
 
     @classmethod
     def action_up( cls, event ):
-        pass
+        return cls.action( cls.active().terrain.up_terrain() )
 
     @classmethod
     def action_down( cls, event ):
-        pass
+        return cls.action( cls.active().terrain.down_terrain() )
 
     @classmethod
     def action_left( cls, event ):
-        pass
+        return cls.action( cls.active().terrain.left_terrain() )
 
     @classmethod
     def action_right( cls, event ):
-        pass
+        return cls.action( cls.active().terrain.right_terrain() )
 
-    def __init__( self ):
-        Unit.units.append( self )
+    def __init__( self, terrain ):
+        Unit.units.appendleft( self )
 
         self.growth = 0
+        self.terrain = terrain
+        self.terrain.add_unit( self )
 
     def __del__( self ):
+        self.terrain.remove_unit( self )
         Unit.units.remove( self )
 
-    def draw_number( self, screen, terrain ):
+    def is_surrounded( self ):
+        return (self.terrain.up_terrain()   .contains_unit() and
+                self.terrain.down_terrain() .contains_unit() and
+                self.terrain.left_terrain() .contains_unit() and
+                self.terrain.right_terrain().contains_unit()    )
+
+    def draw_number( self, screen ):
         myfont = pygame.font.SysFont("monospace", 20)
 
         # render text
         label = myfont.render("%i" % self.growth, 1, colors.BLACK)
-        screen.blit(label, terrain)
+        screen.blit(label, self.terrain)
 
-    def draw( self, screen, terrain ):
-        pygame.draw.rect( screen, colors.GREEN, terrain )
-        self.draw_number( screen, terrain )
+    def draw( self, screen ):
+        pygame.draw.rect( screen, colors.GREEN, self.terrain )
+        self.draw_number( screen )
 
         if self is Unit.active():
-            terrain.draw_border(screen, colors.RED)
+            self.terrain.draw_border(screen, colors.RED)
+
+def init_unit():
+    Unit( Terrain.grid[0][0] )
+
+def all():
+    return Unit.units
 

@@ -7,12 +7,12 @@ import sys
 
 import colors
 import terrain as t
-from unit import Unit
+import unit as u
 
 TITLE = 'Units activate!'
 
 def turn_end(grid):
-    for unit in Unit.units:
+    for unit in u.Unit.units:
         unit.growth += 1
 
 def do_nothing( event ):
@@ -30,21 +30,21 @@ def mouse_motion( event ):
 def mouse_button_down( event ):
     result = t.collision( event.pos )
     if result is not None:
-        result.add_unit( Unit() )
-        #result.change_color()
+        return
+        u.Unit( result )
 
 def key_down( event ):
 
     # NOTE: Throwaway code to test highlighting and controls
     action = {
-        pygame.K_UP:    Unit.action_up,
-        pygame.K_DOWN:  Unit.action_down,
-        pygame.K_LEFT:  Unit.action_left,
-        pygame.K_RIGHT: Unit.action_right
+        pygame.K_UP:    u.Unit.action_up,
+        pygame.K_DOWN:  u.Unit.action_down,
+        pygame.K_LEFT:  u.Unit.action_left,
+        pygame.K_RIGHT: u.Unit.action_right
     }
     if event.key in action:
-        action[ event.key ]( event )
-        Unit.activate_next()
+        if action[ event.key ]( event ):
+            u.Unit.activate_next()
 
     if event.key == pygame.K_RETURN:
         turn_end(t.Terrain.grid)
@@ -64,6 +64,7 @@ def main():
     pygame.display.flip()
 
     t.init_grid()
+    u.init_unit()
 
     # Event managing dictionary
     # For events we do not process, we are defaulting to doing nothing
@@ -84,6 +85,8 @@ def main():
         screen.fill(colors.BLACK)
         for terrain in t.all():
             terrain.draw(screen)
+        for unit in u.all():
+            unit.draw(screen)
         pygame.display.flip()
 
 if __name__ == '__main__':

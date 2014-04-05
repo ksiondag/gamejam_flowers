@@ -2,7 +2,6 @@
 import pygame
 
 import colors
-from unit import Unit
 
 # Terrain constants
 WIDTH  = 50
@@ -28,14 +27,21 @@ class Terrain( pygame.Rect ):
         pygame.Rect.__init__(self, left, top, width, height)
         self.pos = (row, col)
 
+        self.units = []
+
         self.row = row
         self.col = col
 
-        # Terrain can contain units (flowers, rabbits, cake rolls, etc.)
-        self.units = []
-
     def add_unit( self, unit ):
-        self.units.append( unit )
+        self.units.append(unit)
+
+    def remove_unit( self, unit ):
+        self.units.remove(unit)
+
+    def contains_unit( self, type=None ):
+        for unit in self.units:
+            if type is None or type==type(unit):
+                return True
 
     def up_terrain( self ):
         row = self.row - 1
@@ -91,8 +97,6 @@ class Terrain( pygame.Rect ):
 
         if self is Terrain.highlight:
             self.draw_border(screen, colors.BLUE)
-        for unit in self.units:
-            unit.draw( screen, self )
 
 def init_grid():
     Terrain.grid = []
@@ -111,7 +115,6 @@ def init_grid():
         Terrain.grid.append( row )
 
     #Terrain.grid[0][0].set_active()
-    Terrain.grid[0][0].add_unit( Unit() )
 
 def all():
     return [terrain for row in Terrain.grid for terrain in row]
