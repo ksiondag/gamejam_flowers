@@ -1,32 +1,20 @@
 Prototypes:
     Technical:
-        DONE Blank screen
-        DONE Static grid
-        DONE Click on grid detection
-        DONE Grid unit highlighting
-        DONE Each grid terrain can contain units
-        DONE Cycle through units
-        DONE Notice unit turn completeness
-        DONE Set next active unit
+        Flower player-controlled unit
+        Rabbit AI unit
         Flower vs. rabbit control setup (player vs. AI)
 
     Mechanics:
-        Growth - Carly
-        Reproduction
+        Skip turn
+        Rabit Reproduction
         Attributes
         
     Art:
-        DONE Rectangles
-        DONE Colored square grid
-        DONE Text font
         Geometry flowers
+        Static image
 
 Structure:
-    DONE Process events dictionary
-    DONE Active grid unit setup improvement
-    DONE Drawables
-    DONE Have quit event call quit method
-    DONE Split into separate files
+    Available actions measurement for deciding if unit can be active.
 
 Bugs:
 

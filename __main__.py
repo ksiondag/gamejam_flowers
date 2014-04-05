@@ -20,7 +20,7 @@ def turn_end(grid):
         if unit.growth < 1:
             dlist.append(unit)
     for something in dlist:
-       something.__del__()
+       something.delete()
 
 def do_nothing( event ):
     return

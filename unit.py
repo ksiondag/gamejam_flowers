@@ -56,7 +56,7 @@ class Unit( object ):
         self.terrain = terrain
         self.terrain.add_unit( self )
 
-    def __del__( self ):
+    def delete( self ):
         self.terrain.remove_unit( self )
         Unit.units.remove(self)
 
