@@ -89,8 +89,10 @@ def main():
             if event.type == pygame.QUIT:
                 return
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                row, column = collision( grid, event.pos )
-                grid[row][column].change_color()
+                result = collision( grid, event.pos )
+                if result is not None:
+                    row, column = result
+                    grid[row][column].change_color()
 
         # Reinitialize screen 
         #screen.blit(background, (0,0))
