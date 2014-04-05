@@ -7,22 +7,13 @@ import sys
 
 import colors
 import terrain as t
+from unit import Unit
 
-TITLE = 'Debug mode!'
+TITLE = 'Units activate!'
 
 def turn_end(grid):
-    for row in range(len(grid)):
-        for col in range(len(grid[row])):
-            damage(grid)
-            grid[row][col].hit = 0
-            
-            if grid[row][col].color != colors.WHITE:
-                grid[row][col].growth += 1
-
-def damage(grid):
-    for row in range(len(grid)):
-        for col in range(len(grid[row])):
-            grid[row][col].growth -= grid[row][col].hit
+    for unit in Unit.units:
+        unit.growth += 1
 
 def do_nothing( event ):
     return
@@ -39,23 +30,23 @@ def mouse_motion( event ):
 def mouse_button_down( event ):
     result = t.collision( event.pos )
     if result is not None:
-        result.change_color()
+        result.add_unit( Unit() )
+        #result.change_color()
 
 def key_down( event ):
+
     # NOTE: Throwaway code to test highlighting and controls
-    movement = {
-        pygame.K_UP:    t.Terrain.active.up_terrain(),
-        pygame.K_DOWN:  t.Terrain.active.down_terrain(),
-        pygame.K_LEFT:  t.Terrain.active.left_terrain(),
-        pygame.K_RIGHT: t.Terrain.active.right_terrain()
+    action = {
+        pygame.K_UP:    Unit.action_up,
+        pygame.K_DOWN:  Unit.action_down,
+        pygame.K_LEFT:  Unit.action_left,
+        pygame.K_RIGHT: Unit.action_right
     }
-    if event.key in movement:
-        movement[ event.key ].set_active()
+    if event.key in action:
+        action[ event.key ]( event )
+        Unit.activate_next()
 
-    elif event.key == pygame.K_q:
-        t.Terrain.active.seed = True
-
-    elif event.key == pygame.K_RETURN:
+    if event.key == pygame.K_RETURN:
         turn_end(t.Terrain.grid)
 
 def main():

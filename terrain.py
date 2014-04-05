@@ -2,13 +2,14 @@
 import pygame
 
 import colors
+from unit import Unit
 
 # Terrain constants
-WIDTH = 50
+WIDTH  = 50
 HEIGHT = 50
 MARGIN = 5
 
-N_ROWS    = 10
+N_ROWS = 10
 N_COLS = 10
 
 def _pixels( count, length, distance ):
@@ -21,14 +22,11 @@ class Terrain( pygame.Rect ):
 
     # Dyanamic grid content
     grid =      None
-
-    active =    None
     highlight = None
 
     def __init__( self, left, top, width, height, row, col ):
         pygame.Rect.__init__(self, left, top, width, height)
         self.pos = (row, col)
-        self.color = colors.WHITE
 
         self.row = row
         self.col = col
@@ -36,20 +34,9 @@ class Terrain( pygame.Rect ):
         # Terrain can contain units (flowers, rabbits, cake rolls, etc.)
         self.units = []
 
-        # NOTE: depracated
-        self.seed = False
-        self.hit = 0
-        self.growth = 0
+    def add_unit( self, unit ):
+        self.units.append( unit )
 
-    def change_color( self ):
-        if self.color == colors.GREEN:
-            self.color = colors.WHITE
-        elif self.color == colors.WHITE:
-            self.color = colors.GREEN
-
-    def is_plant( self ):
-        return self.color == colors.GREEN
-    
     def up_terrain( self ):
         row = self.row - 1
         col = self.col
@@ -82,18 +69,8 @@ class Terrain( pygame.Rect ):
         else:
             return Terrain.grid[row][col]
 
-    def set_active( self ):
-        Terrain.active = self
-    
     def set_highlight( self ):
         Terrain.highlight = self
-    
-    def draw_number( self, screen ):
-        myfont = pygame.font.SysFont("monospace", 20)
-
-        # render text
-        label = myfont.render("%i" % self.growth, 1, colors.BLACK)
-        screen.blit(label, (self))
 
     def draw_border( self, screen, color ):
 
@@ -110,14 +87,12 @@ class Terrain( pygame.Rect ):
         pygame.draw.rect( screen, color, bottom_rect )
 
     def draw( self, screen ):
-        pygame.draw.rect( screen, self.color, self )
-        self.draw_number( screen )
+        pygame.draw.rect( screen, colors.WHITE, self )
 
         if self is Terrain.highlight:
             self.draw_border(screen, colors.BLUE)
-        if self is Terrain.active:
-            self.draw_border(screen, colors.RED)
-
+        for unit in self.units:
+            unit.draw( screen, self )
 
 def init_grid():
     Terrain.grid = []
@@ -135,7 +110,8 @@ def init_grid():
 
         Terrain.grid.append( row )
 
-    Terrain.grid[0][0].set_active()
+    #Terrain.grid[0][0].set_active()
+    Terrain.grid[0][0].add_unit( Unit() )
 
 def all():
     return [terrain for row in Terrain.grid for terrain in row]

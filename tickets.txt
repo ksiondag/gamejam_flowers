@@ -4,11 +4,14 @@ Prototypes:
         DONE Static grid
         DONE Click on grid detection
         DONE Grid unit highlighting
-        Each grid terrain can contain units
+        DONE Each grid terrain can contain units
+        DONE Cycle through units
+        DONE Notice unit turn completeness
+        DONE Set next active unit
+        Flower vs. rabbit control setup (player vs. AI)
 
     Mechanics:
         Growth - Carly
-        Cycle through units - Daniel
         Reproduction
         Attributes
         
