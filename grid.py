@@ -2,6 +2,9 @@
 
 import pygame
 
+import collections
+import sys
+
 TITLE = 'Grid Area!'
 
 # TODO: put this in constants file eventually
@@ -23,11 +26,16 @@ COLUMNS = 10
 
 class Square( pygame.Rect ):
 
+    activeRow = None
+    activeColumn = None
+
     def __init__( self, left, top, width, height ):
         pygame.Rect.__init__(self, left, top, width, height)
         self.color = WHITE
-        self.growth = 0
         self.active = False
+        self.growth = 0
+
+        # NOTE: currently placeholders
         self.seed = False
         self.hit = 0
 
@@ -36,6 +44,9 @@ class Square( pygame.Rect ):
             self.color = WHITE
         elif self.color == WHITE:
             self.color = GREEN
+
+    def is_plant( self ):
+        return self.color == GREEN
     
     def draw_number( self, screen ):
         # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
@@ -94,7 +105,51 @@ def active_border( screen, square ):
     pygame.draw.rect( screen, RED, (square.left, square.top-MARGIN, WIDTH,  MARGIN) )
     pygame.draw.rect( screen, RED, (square.right, square.top, MARGIN, HEIGHT) )
     pygame.draw.rect( screen, RED, (square.left, square.bottom, WIDTH, MARGIN) )
-    
+
+def do_nothing( grid, event ):
+    return
+
+def quit( grid, event ):
+    pygame.quit()
+    sys.exit()
+
+def mouse_button_down( grid, event ):
+    result = collision( grid, event.pos )
+    if result is not None:
+        row, column = result
+        grid[row][column].change_color()
+
+def key_down( grid, event ):
+    # TODO: some stuff
+    if event.key == pygame.K_UP:
+        if Square.activeRow > 0:
+            grid[Square.activeRow][Square.activeColumn].active = False
+            Square.activeRow -= 1
+            grid[Square.activeRow][Square.activeColumn].active = True
+
+    elif event.key == pygame.K_DOWN:
+        if Square.activeRow < ROWS -1:
+            grid[Square.activeRow][Square.activeColumn].active = False
+            Square.activeRow += 1
+            grid[Square.activeRow][Square.activeColumn].active = True
+
+    elif event.key == pygame.K_LEFT:
+        if Square.activeColumn > 0:
+            grid[Square.activeRow][Square.activeColumn].active = False
+            Square.activeColumn -= 1
+            grid[Square.activeRow][Square.activeColumn].active = True
+
+    elif event.key == pygame.K_RIGHT:
+        if Square.activeColumn < COLUMNS-1:
+            grid[Square.activeRow][Square.activeColumn].active = False
+            Square.activeColumn += 1
+            grid[Square.activeRow][Square.activeColumn].active = True
+
+    elif event.key == pygame.K_q:
+        grid[Square.activeRow][Square.activeColumn].seed = True
+
+    elif event.key == pygame.K_RETURN:
+        turn_end(grid)
     
 def main():
     # Initialize screen
@@ -106,59 +161,29 @@ def main():
     # Initialize clock
     clock = pygame.time.Clock()
 
-    # Blank screen set to black
-    #background = pygame.Surface(screen.get_size())
-    #background = background.convert()
-    #background.fill(BLACK)
-
-    # Blit everything to the screen
-    #screen.blit(background, (0, 0))
+    # Initialize background
     screen.fill(BLACK)
     pygame.display.flip()
 
     grid = init_grid(ROWS, COLUMNS, HEIGHT, WIDTH, MARGIN)
     grid[0][0].active = True
-    activeRow = 0
-    activeColumn = 0
+
+    Square.activeRow = 0
+    Square.activeColumn = 0
+
+    # Event managing dictionary
+    # For events we do not process, we are defaulting to doing nothing
+    process = collections.defaultdict( lambda: do_nothing )
+    process.update( [
+        (pygame.QUIT, quit),
+        (pygame.MOUSEBUTTONDOWN, mouse_button_down),
+        (pygame.KEYDOWN, key_down)
+    ] )
 
     while True:
+        # Handle events and change state as necessary
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                result = collision( grid, event.pos )
-                if result is not None:
-                    row, column = result
-                    grid[row][column].change_color()
-
-            elif event.type == pygame.KEYUP:
-                # TODO: some stuff
-                if event.key == pygame.K_UP:
-                    if activeRow > 0:
-                        grid[activeRow][activeColumn].active = False
-                        activeRow -= 1
-                        grid[activeRow][activeColumn].active = True
-                elif event.key == pygame.K_DOWN:
-                    if activeRow < ROWS -1:
-                        grid[activeRow][activeColumn].active = False
-                        activeRow += 1
-                        grid[activeRow][activeColumn].active = True
-                elif event.key == pygame.K_LEFT:
-                    if activeColumn > 0:
-                        grid[activeRow][activeColumn].active = False
-                        activeColumn -= 1
-                        grid[activeRow][activeColumn].active = True
-                elif event.key == pygame.K_RIGHT:
-                    if activeColumn < COLUMNS-1:
-                        grid[activeRow][activeColumn].active = False
-                        activeColumn += 1
-                        grid[activeRow][activeColumn].active = True
-                elif event.key == pygame.K_q:
-                    grid[activeRow][activeColumn].seed = True
-                
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    turn_end(grid)
+            process[event.type]( grid, event )
 
         # Reinitialize screen 
         #screen.blit(background, (0,0))
@@ -176,5 +201,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-    pygame.quit()
 

@@ -1,0 +1,32 @@
+Prototypes:
+    Technical:
+        DONE Blank screen
+        DONE Static grid
+        DONE Click on grid detection
+        DONE Grid unit highlighting
+
+    Mechanics:
+        Growth - Carly
+        Cycle through units - Daniel
+        Reproduction
+        Attributes
+        
+    Art:
+        DONE Rectangles
+        DONE Colored square grid
+        DONE Text font
+        Geometry flowers
+
+Structure:
+    Process events dictionary - Rory
+    Drawables
+    Have quit event call quit method
+
+    Active grid unit setup improvement
+
+Bugs:
+
+
+Someday/Maybe:
+    Popup GUI objects
+
