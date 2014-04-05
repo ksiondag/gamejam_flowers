@@ -20,7 +20,7 @@ Prototypes:
 Structure:
     DONE Process events dictionary
     DONE Active grid unit setup improvement
-    Drawables
+    DONE Drawables
     Have quit event call quit method
 
 Bugs:

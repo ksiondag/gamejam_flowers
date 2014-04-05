@@ -29,6 +29,29 @@ class Terrain( pygame.Rect ):
     grid = None
     active = None
 
+    @classmethod
+    def init_grid( cls, n_rows, n_cols, height, width, margin ):
+        cls.grid = []
+
+        # Grid spacing
+        x = margin
+        y = margin
+        for row_index in range(n_rows):
+            row = []
+            for col_index in range(n_cols):
+                row.append(Terrain(x, y, width, height, row_index, col_index))
+                x += width + margin
+            y += height + margin
+            x = margin
+
+            cls.grid.append( row )
+
+        cls.grid[0][0].set_active()
+
+    @classmethod
+    def all( cls ):
+        return [terrain for row in cls.grid for terrain in row]
+
     def __init__( self, left, top, width, height, row, col ):
         pygame.Rect.__init__(self, left, top, width, height)
         self.pos = (row, col)
@@ -163,24 +186,6 @@ def key_down( grid, event ):
     elif event.key == pygame.K_RETURN:
         turn_end(grid)
 
-def init_grid( n_rows, n_cols, height, width, margin ):
-    grid = []
-
-    # Grid spacing
-    x = margin
-    y = margin
-    for row_index in range(n_rows):
-        row = []
-        for col_index in range(n_cols):
-            row.append(Terrain(x, y, width, height, row_index, col_index))
-            x += width + margin
-        y += height + margin
-        x = margin
-
-        grid.append( row )
-
-    return grid
-    
 def main():
     # Initialize screen
     size = (pixels(ROWS, HEIGHT, MARGIN), pixels(COLUMNS, WIDTH, MARGIN))
@@ -195,8 +200,7 @@ def main():
     screen.fill(BLACK)
     pygame.display.flip()
 
-    grid = init_grid(ROWS, COLUMNS, HEIGHT, WIDTH, MARGIN)
-    grid[0][0].set_active()
+    Terrain.init_grid(ROWS, COLUMNS, HEIGHT, WIDTH, MARGIN)
 
     # Event managing dictionary
     # For events we do not process, we are defaulting to doing nothing
@@ -210,13 +214,12 @@ def main():
     while True:
         # Handle events and change state as necessary
         for event in pygame.event.get():
-            process[event.type]( grid, event )
+            process[event.type]( Terrain.grid, event )
 
         # Redraw screen
         screen.fill(BLACK)
-        for row in grid:
-            for terrain in row:
-                terrain.draw(screen)
+        for terrain in Terrain.all():
+            terrain.draw(screen)
         pygame.display.flip()
 
 if __name__ == '__main__':
