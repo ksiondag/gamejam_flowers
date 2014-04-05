@@ -4,6 +4,7 @@ Prototypes:
         DONE Static grid
         DONE Click on grid detection
         DONE Grid unit highlighting
+        Each grid terrain can contain units
 
     Mechanics:
         Growth - Carly
@@ -21,7 +22,8 @@ Structure:
     DONE Process events dictionary
     DONE Active grid unit setup improvement
     DONE Drawables
-    Have quit event call quit method
+    DONE Have quit event call quit method
+    DONE Split into separate files
 
 Bugs:
 
