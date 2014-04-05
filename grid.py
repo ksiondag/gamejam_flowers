@@ -100,6 +100,8 @@ def main():
 
     grid = init_grid(ROWS, COLUMNS, HEIGHT, WIDTH, MARGIN)
     grid[0][0].active = True
+    activeRow = 0
+    activeColumn = 0
 
     while True:
         for event in pygame.event.get():
@@ -112,7 +114,27 @@ def main():
                     grid[row][column].change_color()
             elif event.type == pygame.KEYUP:
                 # TODO: some stuff
-                pass
+                if event.key == pygame.K_UP:
+                    if activeRow > 0:
+                        grid[activeRow][activeColumn].active = False
+                        activeRow = activeRow -1
+                        grid[activeRow][activeColumn].active = True
+                elif event.key == pygame.K_DOWN:
+                    if activeRow < ROWS -1:
+                        grid[activeRow][activeColumn].active = False
+                        activeRow = activeRow +1
+                        grid[activeRow][activeColumn].active = True
+                elif event.key == pygame.K_LEFT:
+                    if activeColumn > 0:
+                        grid[activeRow][activeColumn].active = False
+                        activeColumn = activeColumn -1
+                        grid[activeRow][activeColumn].active = True
+                elif event.key == pygame.K_RIGHT:
+                    if activeColumn < COLUMNS-1:
+                        grid[activeRow][activeColumn].active = False
+                        activeColumn = activeColumn +1
+                        grid[activeRow][activeColumn].active = True
+                
 
         # Reinitialize screen 
         #screen.blit(background, (0,0))
