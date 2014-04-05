@@ -25,17 +25,26 @@ class Square( pygame.Rect ):
 
     def __init__( self, left, top, width, height ):
         pygame.Rect.__init__(self, left, top, width, height)
-        self.color = GREEN
+        self.color = WHITE
         self.growth = 0
         self.active = False
         self.seed = False
+        self.hit = 0
 
     def change_color( self ):
         if self.color == GREEN:
             self.color = WHITE
-        else:
+        elif self.color == WHITE:
             self.color = GREEN
+    
+    def draw_number( self, screen ):
+        # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
+        myfont = pygame.font.SysFont("monospace", 20)
 
+        # render text
+        label = myfont.render("%i" % self.growth, 1, BLACK)
+        screen.blit(label, (self))
+    
 def pixels( count, length, distance ):
     return length*count + distance*(count+1)
 
@@ -65,13 +74,20 @@ def collision( grid, pos ):
     
     return None
 
-def draw_number( screen, number ):
-    # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
-    myfont = pygame.font.SysFont("monospace", 15)
+def turn_end(grid):
+    for row in range(len(grid)):
+        for column in range(len(grid[row])):
+            damage(grid)
+            grid[row][column].hit = 0
+            
+            #BUG currently acts as though color is default color for all
+            if grid[row][column].color != WHITE:
+                grid[row][column].growth += 1
 
-    # render text
-    label = myfont.render("%i" % number, 1, BLACK)
-    screen.blit(label, (100, 100))
+def damage(grid):
+    for row in range(len(grid)):
+        for column in range(len(grid[row])):
+            grid[row][column].growth -= grid[row][column].hit
 
 def active_border( screen, square ):
     pygame.draw.rect( screen, RED, (square.left-MARGIN, square.top, MARGIN, HEIGHT) )
@@ -114,6 +130,7 @@ def main():
                 if result is not None:
                     row, column = result
                     grid[row][column].change_color()
+
             elif event.type == pygame.KEYUP:
                 # TODO: some stuff
                 if event.key == pygame.K_UP:
@@ -139,6 +156,9 @@ def main():
                 elif event.key == pygame.K_q:
                     grid[activeRow][activeColumn].seed = True
                 
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    turn_end(grid)
 
         # Reinitialize screen 
         #screen.blit(background, (0,0))
@@ -147,11 +167,10 @@ def main():
         for row in range(ROWS):
             for column in range(COLUMNS):
                 pygame.draw.rect( screen, grid[row][column].color, grid[row][column] )
+                grid[row][column].draw_number( screen )
 
                 if grid[row][column].active:
                     active_border(screen, grid[row][column])
-
-        draw_number( screen, 0 )
 
         pygame.display.flip()
 
