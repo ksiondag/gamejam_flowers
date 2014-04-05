@@ -1,2 +1,0 @@
-@LOW What does the (0, 0) do in screen.blit(background, (0, 0))?
-@LOW What does pygame.display.flip() do?

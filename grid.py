@@ -21,8 +21,46 @@ MARGIN = 5
 ROWS    = 10
 COLUMNS = 10
 
+class Square( pygame.Rect ):
+
+    def __init__( self, left, top, width, height ):
+        pygame.Rect.__init__(self, left, top, width, height)
+        self.color = GREEN
+
+    def change_color( self ):
+        if self.color == GREEN:
+            self.color = WHITE
+        else:
+            self.color = GREEN
+
 def pixels( count, length, distance ):
     return length*count + distance*(count+1)
+
+def init_grid( rows, columns, height, width, margin ):
+    grid = []
+
+    # Draw grid
+    x = margin
+    y = margin
+    for row in range(rows):
+        grid.append( [] )
+        for column in range(columns):
+            grid[row].append( Square( x, y, width, height ) )
+            x += width + margin
+        y += height + margin
+        x = margin
+
+    return grid
+
+def collision( grid, pos ):
+    
+    for row in range(len(grid)):
+        for column in range(len(grid[row])):
+            rect = grid[row][column]
+            if rect.collidepoint( pos ):
+                return row, column
+    
+    return None
 
 def main():
     # Initialize screen
@@ -44,26 +82,26 @@ def main():
     screen.fill(BLACK)
     pygame.display.flip()
 
+    grid = init_grid(ROWS, COLUMNS, HEIGHT, WIDTH, MARGIN)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                row, column = collision( grid, event.pos )
+                grid[row][column].change_color()
 
         # Reinitialize screen 
         #screen.blit(background, (0,0))
         screen.fill(BLACK)
 
-        # Draw grid
-        x = MARGIN
-        y = MARGIN
         for row in range(ROWS):
             for column in range(COLUMNS):
-                pygame.draw.rect( screen, GREEN, (x, y, WIDTH, HEIGHT) )
-                x += WIDTH + MARGIN
-            y += HEIGHT + MARGIN
-            x = MARGIN
+                pygame.draw.rect( screen, grid[row][column].color, grid[row][column] )
 
         pygame.display.flip()
 
 if __name__ == '__main__':
     main()
+
