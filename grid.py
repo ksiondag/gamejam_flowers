@@ -25,15 +25,15 @@ class Square( pygame.Rect ):
 
     def __init__( self, left, top, width, height ):
         pygame.Rect.__init__(self, left, top, width, height)
-        self.color = GREEN
+        self.color = WHITE
         self.growth = 0
 
     def change_color( self ):
         if self.color == GREEN:
             self.color = WHITE
-        else:
+        elif self.color == WHITE:
             self.color = GREEN
-
+    
 def pixels( count, length, distance ):
     return length*count + distance*(count+1)
 
@@ -76,7 +76,12 @@ def draw_number( screen, number, grid ):
 def turn_end(grid):
     for row in range(len(grid)):
         for column in range(len(grid[row])):
-            grid[row][column].growth += 1
+            #BUG currently acts as though color is default color for all
+            compare = cmp (grid[row][column].color, WHITE)
+            print grid[row][column].color
+            print compare
+            if compare == 0:
+                grid[row][column].growth += 1
 
 def main():
     # Initialize screen
