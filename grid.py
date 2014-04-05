@@ -28,6 +28,7 @@ class Square( pygame.Rect ):
         self.color = GREEN
         self.growth = 0
         self.active = False
+        self.seed = False
 
     def change_color( self ):
         if self.color == GREEN:
@@ -77,7 +78,8 @@ def active_border( screen, square ):
     pygame.draw.rect( screen, RED, (square.left, square.top-MARGIN, WIDTH,  MARGIN) )
     pygame.draw.rect( screen, RED, (square.right, square.top, MARGIN, HEIGHT) )
     pygame.draw.rect( screen, RED, (square.left, square.bottom, WIDTH, MARGIN) )
-
+    
+    
 def main():
     # Initialize screen
     size = (pixels(ROWS, HEIGHT, MARGIN), pixels(COLUMNS, WIDTH, MARGIN))
@@ -117,23 +119,25 @@ def main():
                 if event.key == pygame.K_UP:
                     if activeRow > 0:
                         grid[activeRow][activeColumn].active = False
-                        activeRow = activeRow -1
+                        activeRow -= 1
                         grid[activeRow][activeColumn].active = True
                 elif event.key == pygame.K_DOWN:
                     if activeRow < ROWS -1:
                         grid[activeRow][activeColumn].active = False
-                        activeRow = activeRow +1
+                        activeRow += 1
                         grid[activeRow][activeColumn].active = True
                 elif event.key == pygame.K_LEFT:
                     if activeColumn > 0:
                         grid[activeRow][activeColumn].active = False
-                        activeColumn = activeColumn -1
+                        activeColumn -= 1
                         grid[activeRow][activeColumn].active = True
                 elif event.key == pygame.K_RIGHT:
                     if activeColumn < COLUMNS-1:
                         grid[activeRow][activeColumn].active = False
-                        activeColumn = activeColumn +1
+                        activeColumn += 1
                         grid[activeRow][activeColumn].active = True
+                elif event.key == pygame.K_q:
+                    grid[activeRow][activeColumn].seed = True
                 
 
         # Reinitialize screen 
