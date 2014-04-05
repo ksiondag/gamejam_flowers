@@ -27,6 +27,7 @@ class Square( pygame.Rect ):
         pygame.Rect.__init__(self, left, top, width, height)
         self.color = GREEN
         self.growth = 0
+        self.active = False
 
     def change_color( self ):
         if self.color == GREEN:
@@ -71,6 +72,12 @@ def draw_number( screen, number ):
     label = myfont.render("%i" % number, 1, BLACK)
     screen.blit(label, (100, 100))
 
+def active_border( screen, square ):
+    pygame.draw.rect( screen, RED, (square.left-MARGIN, square.top, MARGIN, HEIGHT) )
+    pygame.draw.rect( screen, RED, (square.left, square.top-MARGIN, WIDTH,  MARGIN) )
+    pygame.draw.rect( screen, RED, (square.right, square.top, MARGIN, HEIGHT) )
+    pygame.draw.rect( screen, RED, (square.left, square.bottom, WIDTH, MARGIN) )
+
 def main():
     # Initialize screen
     size = (pixels(ROWS, HEIGHT, MARGIN), pixels(COLUMNS, WIDTH, MARGIN))
@@ -92,6 +99,7 @@ def main():
     pygame.display.flip()
 
     grid = init_grid(ROWS, COLUMNS, HEIGHT, WIDTH, MARGIN)
+    grid[0][0].active = True
 
     while True:
         for event in pygame.event.get():
@@ -113,6 +121,9 @@ def main():
         for row in range(ROWS):
             for column in range(COLUMNS):
                 pygame.draw.rect( screen, grid[row][column].color, grid[row][column] )
+
+                if grid[row][column].active:
+                    active_border(screen, grid[row][column])
 
         draw_number( screen, 0 )
 
