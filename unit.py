@@ -14,8 +14,8 @@ class Unit( object ):
     @classmethod
     def activate_next( cls ):
         Unit.units.rotate(1)
-        while Unit.active().is_surrounded():
-            Unit.units.rotate(1)
+        #while Unit.active().is_surrounded():
+            #Unit.units.rotate(1)
 
     @classmethod
     def active( cls ):
@@ -36,38 +36,6 @@ class Unit( object ):
 
         return action[ event.key ]()
 
-    def action_direction( self, action_terrain ):
-        if action_terrain.contains_unit( type(self) ):
-            return False
-        else:
-            Unit( action_terrain )
-            return True
-
-    def action_up( self ):
-        action_terrain = self.terrain.up_terrain()
-        return self.action_direction( action_terrain )
-
-    def action_down( self ):
-        action_terrain = self.terrain.down_terrain()
-        return self.action_direction( action_terrain )
-
-    def action_left( self ):
-        action_terrain = self.terrain.left_terrain()
-        return self.action_direction( action_terrain )
-
-    def action_right( self ):
-        action_terrain = self.terrain.right_terrain()
-        return self.action_direction( action_terrain )
-    
-    def action_skip( self ):
-        return True
-
-    def action_attack( self ):
-        return True
-
-    def action_defend( self ):
-        return True
-
     def __init__( self, terrain ):
         Unit.units.appendleft( self )
 
@@ -77,7 +45,28 @@ class Unit( object ):
 
     def delete( self ):
         self.terrain.remove_unit( self )
-        Unit.units.remove(self)
+        Unit.units.remove( self )
+
+    def action_up( self ):
+        return True
+
+    def action_down( self ):
+        return True
+
+    def action_left( self ):
+        return True
+
+    def action_right( self ):
+        return True
+    
+    def action_skip( self ):
+        return True
+
+    def action_attack( self ):
+        return True
+
+    def action_defend( self ):
+        return True
 
     def is_surrounded( self, unit_type=None ):
         return (self.terrain.up_terrain()   .contains_unit(unit_type) and

@@ -8,6 +8,7 @@ import sys
 import colors
 import terrain as t
 import unit as u
+import flower as f
 
 TITLE = 'Units activate!'
 
@@ -74,7 +75,7 @@ def main():
     pygame.display.flip()
 
     t.init_grid()
-    u.init_unit()
+    f.init_unit()
 
     # Event managing dictionary
     # For events we do not process, we are defaulting to doing nothing
