@@ -102,6 +102,9 @@ def main():
                 if result is not None:
                     row, column = result
                     grid[row][column].change_color()
+            elif event.type == pygame.KEYUP:
+                # TODO: some stuff
+                pass
 
         # Reinitialize screen 
         #screen.blit(background, (0,0))
