@@ -27,12 +27,21 @@ class Square( pygame.Rect ):
         pygame.Rect.__init__(self, left, top, width, height)
         self.color = WHITE
         self.growth = 0
+        self.hit = 0
 
     def change_color( self ):
         if self.color == GREEN:
             self.color = WHITE
         elif self.color == WHITE:
             self.color = GREEN
+    
+    def draw_number( self, screen ):
+        # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
+        myfont = pygame.font.SysFont("monospace", 20)
+
+        # render text
+        label = myfont.render("%i" % self.growth, 1, BLACK)
+        screen.blit(label, (self))
     
 def pixels( count, length, distance ):
     return length*count + distance*(count+1)
@@ -63,25 +72,20 @@ def collision( grid, pos ):
     
     return None
 
-def draw_number( screen, number, grid ):
-    # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
-    myfont = pygame.font.SysFont("monospace", 20)
-
-    # render text
-    label = myfont.render("%i" % number, 1, BLACK)
-    for row in range(len(grid)):
-        for column in range(len(grid[row])):
-            screen.blit(label, (grid[row][column]))
-
 def turn_end(grid):
     for row in range(len(grid)):
         for column in range(len(grid[row])):
+            damage(grid)
+            grid[row][column].hit = 0
+            
             #BUG currently acts as though color is default color for all
-            compare = cmp (grid[row][column].color, WHITE)
-            print grid[row][column].color
-            print compare
-            if compare == 0:
+            if grid[row][column].color != WHITE:
                 grid[row][column].growth += 1
+
+def damage(grid):
+    for row in range(len(grid)):
+        for column in range(len(grid[row])):
+            grid[row][column].growth -= grid[row][column].hit
 
 def main():
     # Initialize screen
@@ -125,8 +129,7 @@ def main():
         for row in range(ROWS):
             for column in range(COLUMNS):
                 pygame.draw.rect( screen, grid[row][column].color, grid[row][column] )
-
-        draw_number( screen, grid[row][column].growth, grid)
+                grid[row][column].draw_number( screen )
 
         pygame.display.flip()
 
