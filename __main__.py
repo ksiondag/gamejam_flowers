@@ -6,12 +6,15 @@ import collections
 import sys
 
 import colors
+import event as e
 import terrain as t
 import unit as u
 import flower as f
-import manager
+import manager as m
 
 TITLE = 'Units activate!'
+
+FPS = 60
 
 def do_nothing( event ):
     return
@@ -33,15 +36,20 @@ def mouse_button_down( event ):
 
 def key_down( event ):
 
-    if manager.listens_for( event.key ):
-        if manager.process( event ):
+    if m.listens_for( event.key ):
+        if m.process( event ):
+            u.Unit.activate_next()
+
+def ai_process( event ):
+    
+    if m.listens_for( event.key ):
+        if m.process( event ):
             u.Unit.activate_next()
 
 def init():
     pygame.init()
 
-    manager.init()
-
+    m.init()
     t.init()
     u.init()
         
@@ -71,9 +79,18 @@ def main():
     ] )
 
     while True:
+        dt = clock.tick( FPS ) / 1000.
+
         # Handle events and change state as necessary
         for event in pygame.event.get():
             process[event.type]( event )
+
+        for event in e.Event.get():
+            ai_process( event )
+
+        # Update all units
+        for unit in u.all():
+            unit.update( dt )
 
         # Redraw screen
         screen.fill(colors.BLACK)
