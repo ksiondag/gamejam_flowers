@@ -38,10 +38,11 @@ class Terrain( pygame.Rect ):
     def remove_unit( self, unit ):
         self.units.remove(unit)
 
-    def contains_unit( self, type=None ):
+    def contains_unit( self, unit_type=None ):
         for unit in self.units:
-            if type is None or type==type(unit):
+            if unit_type is None or unit_type==type(unit):
                 return True
+        return False
     
     def say_unit(self):
         for unit in self.units:
@@ -102,7 +103,7 @@ class Terrain( pygame.Rect ):
         if self is Terrain.highlight:
             self.draw_border(screen, colors.BLUE)
 
-def init_grid():
+def init():
     Terrain.grid = []
 
     # Grid spacing

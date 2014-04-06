@@ -6,6 +6,8 @@ import pygame
 import colors
 from terrain import Terrain
 
+import manager
+
 
 class Unit( object ):
     
@@ -14,44 +16,16 @@ class Unit( object ):
     @classmethod
     def activate_next( cls ):
         Unit.units.rotate(1)
-        while Unit.active().is_surrounded():
-            Unit.units.rotate(1)
+        manager.restore_default()
+        manager.update_current( cls.active().active_listeners )
+
+        #while Unit.active().is_surrounded():
+            #Unit.units.rotate(1)
 
     @classmethod
     def active( cls ):
         return Unit.units[0]
     
-    @classmethod
-    def action( cls, action_terrain ):
-        if cls.active().terrain is action_terrain or action_terrain.contains_unit():
-            return False
-        elif Terrain.say_unit(cls.active().terrain).growth < 2:
-            return False
-        else:
-            Terrain.say_unit(cls.active().terrain).growth -= 2
-            Unit( action_terrain )
-            return True
-
-    @classmethod
-    def action_up( cls, event ):
-        return cls.action( cls.active().terrain.up_terrain() )
-
-    @classmethod
-    def action_down( cls, event ):
-        return cls.action( cls.active().terrain.down_terrain() )
-
-    @classmethod
-    def action_left( cls, event ):
-        return cls.action( cls.active().terrain.left_terrain() )
-
-    @classmethod
-    def action_right( cls, event ):
-        return cls.action( cls.active().terrain.right_terrain() )
-    
-    @classmethod
-    def action_skip( cls, event ):
-        return True
-
     def __init__( self, terrain ):
         Unit.units.appendleft( self )
 
@@ -59,15 +33,18 @@ class Unit( object ):
         self.terrain = terrain
         self.terrain.add_unit( self )
 
+        self.active_listeners = {
+        }
+
     def delete( self ):
         self.terrain.remove_unit( self )
-        Unit.units.remove(self)
+        Unit.units.remove( self )
 
-    def is_surrounded( self ):
-        return (self.terrain.up_terrain()   .contains_unit() and
-                self.terrain.down_terrain() .contains_unit() and
-                self.terrain.left_terrain() .contains_unit() and
-                self.terrain.right_terrain().contains_unit()    )
+    def is_surrounded( self, unit_type=None ):
+        return (self.terrain.up_terrain()   .contains_unit(unit_type) and
+                self.terrain.down_terrain() .contains_unit(unit_type) and
+                self.terrain.left_terrain() .contains_unit(unit_type) and
+                self.terrain.right_terrain().contains_unit(unit_type)    )
 
     def draw_number( self, screen ):
         myfont = pygame.font.SysFont("monospace", 20)
@@ -83,9 +60,24 @@ class Unit( object ):
         if self is Unit.active():
             self.terrain.draw_border(screen, colors.RED)
 
-def init_unit():
-    Unit( Terrain.grid[0][0] )
+def init():
+    import flower
+    flower.Flower( Terrain.grid[0][0] )
+
+    manager.restore_default()
+    manager.update_current( Unit.active().active_listeners )
 
 def all():
     return Unit.units
+
+def turn_end( event ):
+    dlist = []
+    for unit in Unit.units:
+        if unit.is_surrounded():
+            unit.growth -= 2
+        unit.growth += 1
+        if unit.growth < 1:
+            dlist.append(unit)
+    for unit in dlist:
+       unit.delete()
 
