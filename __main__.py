@@ -9,19 +9,9 @@ import colors
 import terrain as t
 import unit as u
 import flower as f
+import manager
 
 TITLE = 'Units activate!'
-
-def turn_end(grid):
-    dlist = []
-    for unit in u.Unit.units:
-        if unit.is_surrounded():
-            unit.growth -= 2
-        unit.growth += 1
-        if unit.growth < 1:
-            dlist.append(unit)
-    for unit in dlist:
-       unit.delete()
 
 def do_nothing( event ):
     return
@@ -43,27 +33,23 @@ def mouse_button_down( event ):
 
 def key_down( event ):
 
-    # NOTE: Throwaway code to test highlighting and controls
-    action = [
-        pygame.K_UP,
-        pygame.K_DOWN,
-        pygame.K_LEFT,
-        pygame.K_RIGHT,
-        pygame.K_SPACE,
-        pygame.K_a,
-        pygame.K_d
-    ]
-    if event.key in action:
-        if u.Unit.action( event ):
+    if manager.listens_for( event.key ):
+        if manager.process( event ):
             u.Unit.activate_next()
 
-    if event.key == pygame.K_RETURN:
-        turn_end(t.Terrain.grid)
-
-def main():
-    # Initialize screen
-    size = t.screen_size()
+def init():
     pygame.init()
+
+    manager.init()
+
+    t.init()
+    u.init()
+        
+def main():
+    init()
+
+    # Setup the screen
+    size = t.screen_size()
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption(TITLE)
 
@@ -73,9 +59,6 @@ def main():
     # Initialize background
     screen.fill(colors.BLACK)
     pygame.display.flip()
-
-    t.init_grid()
-    f.init_unit()
 
     # Event managing dictionary
     # For events we do not process, we are defaulting to doing nothing

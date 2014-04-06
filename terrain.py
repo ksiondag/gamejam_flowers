@@ -99,7 +99,7 @@ class Terrain( pygame.Rect ):
         if self is Terrain.highlight:
             self.draw_border(screen, colors.BLUE)
 
-def init_grid():
+def init():
     Terrain.grid = []
 
     # Grid spacing

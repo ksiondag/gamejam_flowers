@@ -6,6 +6,8 @@ import pygame
 import colors
 from terrain import Terrain
 
+import manager
+
 
 class Unit( object ):
     
@@ -14,6 +16,9 @@ class Unit( object ):
     @classmethod
     def activate_next( cls ):
         Unit.units.rotate(1)
+        manager.restore_default()
+        manager.update_current( cls.active().active_listeners )
+
         #while Unit.active().is_surrounded():
             #Unit.units.rotate(1)
 
@@ -21,21 +26,6 @@ class Unit( object ):
     def active( cls ):
         return Unit.units[0]
     
-    @classmethod
-    def action( cls, event ):
-        active = cls.active()
-        action = {
-            pygame.K_UP:    active.action_up,
-            pygame.K_DOWN:  active.action_down,
-            pygame.K_LEFT:  active.action_left,
-            pygame.K_RIGHT: active.action_right,
-            pygame.K_SPACE: active.action_skip,
-            pygame.K_a:     active.action_attack,
-            pygame.K_d:     active.action_defend
-        }
-
-        return action[ event.key ]()
-
     def __init__( self, terrain ):
         Unit.units.appendleft( self )
 
@@ -43,30 +33,12 @@ class Unit( object ):
         self.terrain = terrain
         self.terrain.add_unit( self )
 
+        self.active_listeners = {
+        }
+
     def delete( self ):
         self.terrain.remove_unit( self )
         Unit.units.remove( self )
-
-    def action_up( self ):
-        return True
-
-    def action_down( self ):
-        return True
-
-    def action_left( self ):
-        return True
-
-    def action_right( self ):
-        return True
-    
-    def action_skip( self ):
-        return True
-
-    def action_attack( self ):
-        return True
-
-    def action_defend( self ):
-        return True
 
     def is_surrounded( self, unit_type=None ):
         return (self.terrain.up_terrain()   .contains_unit(unit_type) and
@@ -88,9 +60,24 @@ class Unit( object ):
         if self is Unit.active():
             self.terrain.draw_border(screen, colors.RED)
 
-def init_unit():
-    Unit( Terrain.grid[0][0] )
+def init():
+    import flower
+    flower.Flower( Terrain.grid[0][0] )
+
+    manager.restore_default()
+    manager.update_current( Unit.active().active_listeners )
 
 def all():
     return Unit.units
+
+def turn_end( event ):
+    dlist = []
+    for unit in Unit.units:
+        if unit.is_surrounded():
+            unit.growth -= 2
+        unit.growth += 1
+        if unit.growth < 1:
+            dlist.append(unit)
+    for unit in dlist:
+       unit.delete()
 
