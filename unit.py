@@ -1,6 +1,6 @@
 
 from collections import deque
-
+import unit #remove
 import pygame
 
 import colors
@@ -11,17 +11,19 @@ import manager
 class Unit( object ):
     
     units  = deque()
+    end_of_turn = 0
 
     @classmethod
     def activate_next( cls ):
-        Unit.units.rotate(1)
+        cls.units.rotate(1)
+
+        cls.end_of_turn -= 1
+        if cls.end_of_turn <= 0:
+            turn_end( None )
+            cls.end_of_turn = len( cls.units )
+
         manager.restore_default()
         manager.update_current( cls.active().active_listeners )
-
-        #print cls.active()
-
-        #while Unit.active().is_surrounded():
-            #Unit.units.rotate(1)
 
     @classmethod
     def active( cls ):
@@ -35,7 +37,6 @@ class Unit( object ):
         self.hit = 0
         self.terrain = terrain
         self.terrain.add_unit( self )
-
         self.active_listeners = {
         }
     
@@ -49,8 +50,7 @@ class Unit( object ):
         self.terrain.remove_unit( self )
         Unit.units.remove( self )
 
-    def is_surrounded( self ):
-        unit_type = type( self )
+    def is_surrounded( self, unit_type=None ):
         return (self.terrain.up_terrain()   .contains_unit(unit_type) and
                 self.terrain.down_terrain() .contains_unit(unit_type) and
                 self.terrain.left_terrain() .contains_unit(unit_type) and
@@ -71,14 +71,13 @@ class Unit( object ):
             self.terrain.draw_border(screen, colors.RED)
 
 def init():
-    import rabbit
-    rabbit.Rabbit( Terrain.grid[-1][-1] )
-
     import flower
-    flower.Flower( Terrain.grid[0][0] )
+    flower.Flower( Terrain.grid[4][4] )
 
-    manager.restore_default()
-    manager.update_current( Unit.active().active_listeners )
+    import rabbit
+    rabbit.Rabbit( Terrain.grid[5][5] )
+
+    Unit.activate_next()
 
 def all():
     return Unit.units

@@ -94,7 +94,8 @@ class Rabbit( unit.Unit ):
             self.find_target()
 
     def draw( self, screen ):
-        pygame.draw.rect( screen, colors.GREY, self.terrain )
+        pygame.draw.rect( screen, colors.GREY, self.terrain )#old, restore?
         self.draw_number( screen )
-        unit.Unit.draw( self, screen )
+        #screen.blit(screen,colors.RABBIT)#DELETE????
+        unit.Unit.draw( self, screen )#Old, restore?
 

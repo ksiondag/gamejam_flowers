@@ -17,7 +17,11 @@ class Event(object):
 
         return events
 
-    def __init__( self, key ):
+    def __init__( self, key, **kwargs ):
         self.key = key
+
+        for k, v in kwargs.items():
+            setattr(self, k, v )
+
         Event._events.append( self )
 

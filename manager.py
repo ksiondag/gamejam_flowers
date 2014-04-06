@@ -35,7 +35,6 @@ def process( event ):
 
 def init():
     default = {
-        pygame.K_RETURN: unit.turn_end
     }
     set_default( default )
 

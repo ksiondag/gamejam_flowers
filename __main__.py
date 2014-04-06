@@ -12,7 +12,7 @@ import unit as u
 import flower as f
 import manager as m
 
-TITLE = 'Units activate!'
+TITLE = "It's Game Time!"
 
 FPS = 60
 
