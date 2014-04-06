@@ -110,12 +110,21 @@ def main():
         for unit in u.all():
             unit.draw(screen)
         pygame.display.flip()
-
         if rabbit_count == 0:
-            print "You win!"
+            pygame.font.init()
+            font = pygame.font.SysFont("Monospace",100)
+            win = font.render("You win!!!",1,colors.BLUE)
+            screen.blit(win,(0,0))#self.terain
+            pygame.display.flip()
+            pygame.time.wait(5000)
             quit( None )
         if flower_count == 0:
-            print "You lose you loser!"
+            pygame.font.init()
+            font = pygame.font.SysFont("Monospace",100)
+            lose = font.render("You lose!!!",1,colors.RED)
+            screen.blit(lose,(0,0))#self.terain
+            pygame.display.flip()
+            pygame.time.wait(5000)
             quit( None )
 
 if __name__ == '__main__':
