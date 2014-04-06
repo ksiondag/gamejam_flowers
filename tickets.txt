@@ -1,6 +1,7 @@
 Prototypes:
     Technical:
         Damage dealt - Carly
+        Actual turns 
         Lose condition notification
         Win condition notification
 
