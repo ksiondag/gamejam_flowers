@@ -28,6 +28,8 @@ class Rabbit( unit.Unit ):
         self.target = None
 
     def _action_direction( self, action_terrain ):
+        if action_terrain.contains_unit(unit_type = flower.Flower):
+            action_terrain.say_unit().growth -= 4
         ai.Action( action_terrain, self )
         return False
 

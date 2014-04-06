@@ -47,7 +47,7 @@ class Flower( unit.Unit ):
             pygame.K_SPACE: self.action_skip,
         }
 
-        self.growth = 1
+        self.growth = 5
 
     def _action_direction( self, action_terrain ):
         action.Action( action_terrain, self )
@@ -80,7 +80,9 @@ class Flower( unit.Unit ):
 
     def update( self, dt ):
         if self.terrain.contains_unit( rabbit.Rabbit ):
-            e.Event( e.DEATH, target=self )
+            pass
+            #e.Event( e.DEATH, target=self )
+            #effects elsewhere
 
     def draw( self, screen ):
         #pygame.draw.rect( screen, colors.GREEN, self.terrain )

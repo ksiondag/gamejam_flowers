@@ -74,7 +74,6 @@ class Action( unit.Unit ):
             unit = flower.Obstacle( self.terrain )
             unit.counter = 5
             unit.obstacle_type = 'p'
-            self.terrain.multiplier = 0
 
         self.delete( None )
         return True
