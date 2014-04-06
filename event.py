@@ -8,8 +8,9 @@ AI_MOVE  = 1004
 AI_SKIP  = 1005
 
 # Turn events
-END_TURN = 1006
-DEATH    = 1007
+END_TURN    = 1006
+DEATH       = 1007
+NEXT_ACTIVE = 1008
 
 class Event(object):
 

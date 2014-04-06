@@ -37,7 +37,8 @@ def special_delivery( event ):
 
 def init():
     default = {
-        event.END_TURN: unit.end_turn( event )        
+        event.END_TURN: unit.end_turn,
+        event.NEXT_ACTIVE: unit.Unit.activate_next
     }
     set_default( default )
 
