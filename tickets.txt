@@ -1,23 +1,23 @@
 Prototypes:
     Technical:
-        Flower player-controlled unit
-        Rabbit AI unit
-        Flower vs. rabbit control setup (player vs. AI)
+        Damage dealt
+        Lose condition notification
+        Win condition notification
 
     Mechanics:
-        Skip turn
         Rabit Reproduction
         Attributes
+        Improved rabbit AI
         
     Art:
+        Drawing of static images over terrain home
         Geometry flowers
-        Static image
 
 Structure:
-    Available actions measurement for deciding if unit can be active.
+    Evaluate as whole (find the things that are wrong)
 
 Bugs:
-
+    Thorns become active member, can't do anything
 
 Someday/Maybe:
     Popup GUI objects
