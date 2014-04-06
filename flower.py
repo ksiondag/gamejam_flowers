@@ -16,7 +16,7 @@ class Obstacle( unit.Unit ):
             pygame.K_SPACE: self.action_skip,
         }
 
-        self.counter = 1
+        self.counter = 2
 
     def set_counter( self, counter ):
         self.counter = counter
@@ -25,13 +25,13 @@ class Obstacle( unit.Unit ):
         return True
 
     def end_turn( self ):
-        if self.counter > 1:
+        print self.counter
+        if self.counter >= 1:
             self.counter -= 1
-        if self.counter < 0:
-            Event( event.DEATH, target=unit )
 
     def update( self, dt ):
-        pass
+        if self.counter <= 0:
+            e.Event( e.DEATH, target=self )
     
     def draw( self, screen ):
         #pygame.draw.rect( screen, colors.BLUE, self.terrain )

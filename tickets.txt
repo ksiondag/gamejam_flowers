@@ -1,15 +1,14 @@
 Prototypes:
     Technical:
-        Actual turns - Rory
-        Damage dealt - Carly
-        Lose condition notification
-        Win condition notification
 
     Mechanics:
-        Rabit Reproduction
         Attributes
+        Rabit Reproduction
         Improved rabbit AI
         
+    Aesthetics:
+        Bettter win/lose notification
+        Start game menu
     Art:
         Drawing of static images over terrain home
         Geometry flowers
@@ -57,7 +56,8 @@ _______________________________________________________________________________
 08:30
 -------------------------------------------------------------------------------
 @Recall @Break 0 13
-@Unplanned 30
+@Recall Restart Computer 0 8
+@Plan UPdate 9
 _______________________________________________________________________________
 09:00
 -------------------------------------------------------------------------------
