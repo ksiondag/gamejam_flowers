@@ -24,8 +24,8 @@ def update_current( E ):
     for k in E:
         _current[k] = E[k]
 
-    import pprint
-    pprint.pprint( _current )
+    #import pprint
+    #pprint.pprint( _current )
 
 def listens_for( event_key ):
     return event_key in _current

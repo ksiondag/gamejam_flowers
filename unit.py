@@ -8,7 +8,6 @@ from terrain import Terrain
 
 import manager
 
-
 class Unit( object ):
     
     units  = deque()
@@ -18,6 +17,8 @@ class Unit( object ):
         Unit.units.rotate(1)
         manager.restore_default()
         manager.update_current( cls.active().active_listeners )
+
+        #print cls.active()
 
         #while Unit.active().is_surrounded():
             #Unit.units.rotate(1)
@@ -47,6 +48,9 @@ class Unit( object ):
                 self.terrain.left_terrain() .contains_unit(unit_type) and
                 self.terrain.right_terrain().contains_unit(unit_type)    )
 
+    def update( self, dt ):
+        pass
+
     def draw_number( self, screen ):
         myfont = pygame.font.SysFont("monospace", 20)
 
@@ -59,6 +63,9 @@ class Unit( object ):
             self.terrain.draw_border(screen, colors.RED)
 
 def init():
+    import rabbit
+    rabbit.Rabbit( Terrain.grid[-1][-1] )
+
     import flower
     flower.Flower( Terrain.grid[0][0] )
 
