@@ -33,6 +33,11 @@ class Terrain( pygame.Rect ):
         self.row = row
         self.col = col
 
+        self._up = None
+        self._down = None
+        self._left = None
+        self._right = None
+
     def add_unit( self, unit ):
         self.units.append(unit)
 
@@ -50,36 +55,16 @@ class Terrain( pygame.Rect ):
             return unit
 
     def up_terrain( self ):
-        row = self.row - 1
-        col = self.col
-        if row < 0:
-            return self
-        else:
-            return Terrain.grid[row][col]
+        return self._up
 
     def down_terrain( self ):
-        row = self.row + 1
-        col = self.col
-        if row >= len(Terrain.grid):
-            return self
-        else:
-            return Terrain.grid[row][col]
+        return self._down
 
     def left_terrain( self ):
-        row = self.row
-        col = self.col - 1
-        if col < 0:
-            return self
-        else:
-            return Terrain.grid[row][col]
+        return self._left
 
     def right_terrain( self ):
-        row = self.row
-        col = self.col + 1
-        if col >= len(Terrain.grid[row]):
-            return self
-        else:
-            return Terrain.grid[row][col]
+        return self._right
 
     def set_highlight( self ):
         Terrain.highlight = self
@@ -120,7 +105,23 @@ def init():
 
         Terrain.grid.append( row )
 
-    #Terrain.grid[0][0].set_active()
+    for row_index in range(N_ROWS):
+        for col_index in range(N_COLS):
+            terrain = Terrain.grid[row_index][col_index]
+
+            up_index    = row_index-1
+            down_index  = row_index+1
+            left_index  = col_index-1
+            right_index = col_index+1
+
+            if up_index >= 0:
+                terrain._up = Terrain.grid[up_index][col_index]
+            if down_index < len(Terrain.grid):
+                terrain._down = Terrain.grid[down_index][col_index]
+            if left_index >= 0:
+                terrain._left = Terrain.grid[row_index][left_index]
+            if right_index < len(Terrain.grid[row_index]):
+                terrain._right = Terrain.grid[row_index][right_index]
 
 def all():
     return [terrain for row in Terrain.grid for terrain in row]

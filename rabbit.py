@@ -1,4 +1,7 @@
 
+import heapq
+import random
+
 import pygame
 
 import ai
@@ -8,6 +11,7 @@ import unit
 import terrain as t
 
 import event as e
+
 
 class Rabbit( unit.Unit ):
 
@@ -24,6 +28,7 @@ class Rabbit( unit.Unit ):
         }
 
         self.wait_time = 1
+        self.turns = 2
 
         self.target = None
 
@@ -61,40 +66,87 @@ class Rabbit( unit.Unit ):
         return terrain2
 
     def find_target( self ):
-        for terrain in t.all():
-            if terrain is not self.terrain and terrain.contains_unit():
-                if self.target is None:
-                    self.target = terrain
-                self.target = self.closer( terrain, self.target )
-                    
+
+        visited = set( [self.terrain] )
+        possibles = [ 
+            (1, self.terrain.up_terrain()),
+            (1, self.terrain.down_terrain()),
+            (1, self.terrain.left_terrain()),
+            (1, self.terrain.right_terrain())
+        ]
+        random.shuffle( possibles )
+
+        while self.target is None and len( possibles ) > 0:
+            #print len( visited )
+            distance, terrain = heapq.heappop( possibles )
+            if terrain is None:
+                continue
+            if terrain in visited:
+                continue
+            if terrain.contains_unit( flower.Flower ):
+                self.target = terrain
+                continue
+            if terrain.contains_unit():
+                continue
+
+            visited.add( terrain )
+
+            heapq.heappush( possibles, (distance+1, terrain.up_terrain()) )
+            heapq.heappush( possibles, (distance+1, terrain.down_terrain()) )
+            heapq.heappush( possibles, (distance+1, terrain.left_terrain()) )
+            heapq.heappush( possibles, (distance+1,  terrain.right_terrain()) )
+
+        print
+
+    def dying( self ):
+        if self.is_surrounded( type(self) ):
+            e.Event( e.DEATH, target=self )
+            return True
+        if self.terrain.contains_unit( flower.Obstacle ):
+            e.Event( e.DEATH, target=self )
+            return True
+
+        return False
+
+    def initiate_action( self ):
+        if self.target:
+            row_diff = self.target.row - self.terrain.row
+            col_diff = self.target.col - self.terrain.col
+
+            if abs( row_diff ) > abs( col_diff ):
+                if row_diff < 0:
+                    e.Event( e.AI_UP )
+                else:
+                    e.Event( e.AI_DOWN )
+            else:
+                if col_diff < 0:
+                    e.Event( e.AI_LEFT )
+                else:
+                    e.Event( e.AI_RIGHT )
+        else:
+            e.Event( e.AI_SKIP )
+
+        self.target = None
 
     def update( self, dt ):
         unit.Unit.update( self, dt )
-        if self.terrain.contains_unit( flower.Obstacle ):
-            e.Event( e.DEATH, target=self )
+
+        if self.dying():
             return
 
-        if self is not unit.Unit.active(): return
+        if self is not unit.Unit.active():
+            return
+
+        if self.turns <= 0:
+            unit.Unit.activate_next()
+            self.turns = 2
+            return 
+
         self.wait_time -= dt
 
         if self.wait_time < 0:
-            self.wait_time = 1
-            if self.target:
-                row_diff = self.target.row - self.terrain.row
-                col_diff = self.target.col - self.terrain.col
-
-                if abs( row_diff ) > abs( col_diff ):
-                    if row_diff < 0:
-                        e.Event( e.AI_UP )
-                    else:
-                        e.Event( e.AI_DOWN )
-                else:
-                    if col_diff < 0:
-                        e.Event( e.AI_LEFT )
-                    else:
-                        e.Event( e.AI_RIGHT )
-            else:
-                e.Event( e.AI_SKIP )
+            self.wait_time = 0.5
+            self.initiate_action()
 
         elif self.target is None:
             self.find_target()

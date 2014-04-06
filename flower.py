@@ -13,7 +13,7 @@ class Obstacle( unit.Unit ):
     def __init__( self, terrain ):
         unit.Unit.__init__( self, terrain )
         self.active_listeners = {
-            pygame.K_SPACE: self.action_skip,
+            e.AI_SKIP:      self.action_skip
         }
 
         self.counter = 2
@@ -30,6 +30,8 @@ class Obstacle( unit.Unit ):
             self.counter -= 1
 
     def update( self, dt ):
+        if unit.Unit.active() is self:
+            e.Event( e.AI_SKIP )
         if self.counter <= 0:
             e.Event( e.DEATH, target=self )
     
@@ -54,7 +56,8 @@ class Flower( unit.Unit ):
         self.growth = 1
 
     def _action_direction( self, action_terrain ):
-        action.Action( action_terrain, self )
+        if action_terrain is not None:
+            action.Action( action_terrain, self )
         return False
 
     def action_up( self, event ):

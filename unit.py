@@ -54,14 +54,22 @@ class Unit( object ):
         manager.update_current( Unit.active().active_listeners )
 
     def is_surrounded( self, unit_type=None ):
-        return (self.terrain.up_terrain()   .contains_unit(unit_type) and
-                self.terrain.down_terrain() .contains_unit(unit_type) and
-                self.terrain.left_terrain() .contains_unit(unit_type) and
-                self.terrain.right_terrain().contains_unit(unit_type)    )
+        up = self.terrain.up_terrain()
+        is_up = up is None or up.contains_unit( unit_type )
+
+        down = self.terrain.down_terrain()
+        is_down = down is None or down.contains_unit( unit_type )
+
+        left = self.terrain.left_terrain()
+        is_left = left is None or left.contains_unit( unit_type )
+
+        right = self.terrain.right_terrain()
+        is_right = right is None or right.contains_unit( unit_type )
+
+        return (is_up and is_down and is_left and is_right)
 
     def update( self, dt ):
-        if self.is_surrounded( type(self) ):
-            e.Event( e.DEATH, target=self )
+        pass
 
     def end_turn( self ):
         pass
