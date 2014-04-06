@@ -103,8 +103,8 @@ class Rabbit( unit.Unit ):
         unit.Unit.end_turn( self )
 
     def draw( self, screen ):
-        pygame.draw.rect( screen, colors.GREY, self.terrain )#old, restore?
-        self.draw_number( screen )
-        #screen.blit(screen,colors.RABBIT)#DELETE????
+        #pygame.draw.rect( screen, colors.GREY, self.terrain )
+        #self.draw_number( screen )
+        screen.blit(colors.RABBIT, self.terrain)
         unit.Unit.draw( self, screen )#Old, restore?
 

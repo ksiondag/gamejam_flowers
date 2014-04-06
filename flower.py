@@ -34,7 +34,8 @@ class Obstacle( unit.Unit ):
         pass
     
     def draw( self, screen ):
-        pygame.draw.rect( screen, colors.BLUE, self.terrain )
+        #pygame.draw.rect( screen, colors.BLUE, self.terrain )
+        screen.blit(colors.THORN, self.terrain)
         unit.Unit.draw( self, screen )
     
 class Flower( unit.Unit ):
@@ -83,7 +84,8 @@ class Flower( unit.Unit ):
             e.Event( e.DEATH, target=self )
 
     def draw( self, screen ):
-        pygame.draw.rect( screen, colors.GREEN, self.terrain )
-        self.draw_number( screen )
+        #pygame.draw.rect( screen, colors.GREEN, self.terrain )
+        #self.draw_number( screen )
+        screen.blit(colors.FLOWER, self.terrain)
         unit.Unit.draw( self, screen )
 

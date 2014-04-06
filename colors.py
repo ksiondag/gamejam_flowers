@@ -10,10 +10,10 @@ RED   = (255,  0,  0)
 import pygame
 
 
-FLOWER = pygame.image.load('flower1.png')
-RABBIT = pygame.image.load('rabbit.png')
-THORN = pygame.image.load('thorn_up.png')
-POISON = pygame.image.load('poison.png')
+FLOWER = pygame.image.load('sprite/flower1.png')
+RABBIT = pygame.image.load('sprite/rabbit.png')
+THORN = pygame.image.load('sprite/thorn_up.png')
+POISON = pygame.image.load('sprite/poison.png')
 
 FLOWER_RECT = FLOWER.get_rect()
 RABBIT_RECT = RABBIT.get_rect()

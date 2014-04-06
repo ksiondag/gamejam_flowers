@@ -76,7 +76,7 @@ def main():
     process = collections.defaultdict( lambda: do_nothing )
     process.update( [
         (pygame.QUIT,               quit),
-        (pygame.MOUSEMOTION,        mouse_motion),
+        #(pygame.MOUSEMOTION,        mouse_motion),
         (pygame.MOUSEBUTTONDOWN,    mouse_button_down),
         (pygame.KEYDOWN,            key_down)
     ] )
@@ -103,13 +103,6 @@ def main():
             if isinstance(unit, r.Rabbit):
                 rabbit_count +=1;
 
-        if rabbit_count == 0:
-            print "You win!"
-            quit( None )
-        if flower_count == 0:
-            print "You lose you loser!"
-            quit( None )
-
         # Redraw screen
         screen.fill(colors.BLACK)
         for terrain in t.all():
@@ -117,6 +110,13 @@ def main():
         for unit in u.all():
             unit.draw(screen)
         pygame.display.flip()
+
+        if rabbit_count == 0:
+            print "You win!"
+            quit( None )
+        if flower_count == 0:
+            print "You lose you loser!"
+            quit( None )
 
 if __name__ == '__main__':
     main()

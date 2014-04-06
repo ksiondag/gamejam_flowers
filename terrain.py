@@ -99,7 +99,7 @@ class Terrain( pygame.Rect ):
         pygame.draw.rect( screen, color, bottom_rect )
 
     def draw( self, screen ):
-        pygame.draw.rect( screen, colors.WHITE, self )
+        pygame.draw.rect( screen, colors.GREEN, self )
 
         if self is Terrain.highlight:
             self.draw_border(screen, colors.BLUE)
