@@ -1,6 +1,8 @@
 
 import pygame
 
+import action
+import colors
 import unit
 from terrain import Terrain
 
@@ -15,16 +17,11 @@ class Flower( unit.Unit ):
             pygame.K_LEFT:  self.action_left,
             pygame.K_RIGHT: self.action_right,
             pygame.K_SPACE: self.action_skip,
-            pygame.K_a:     self.action_attack,
-            pygame.K_d:     self.action_defend
         }
 
     def _action_direction( self, action_terrain ):
-        if action_terrain.contains_unit( type(self) ):
-            return False
-        else:
-            Flower( action_terrain )
-            return True
+        action.Action( action_terrain, self )
+        return False
 
     def action_up( self, event ):
         action_terrain = self.terrain.up_terrain()
@@ -45,9 +42,7 @@ class Flower( unit.Unit ):
     def action_skip( self, event):
         return True
 
-    def action_attack( self, event ):
-        return True
-
-    def action_defend( self, event ):
-        return True
-
+    def draw( self, screen ):
+        pygame.draw.rect( screen, colors.GREEN, self.terrain )
+        self.draw_number( screen )
+        unit.Unit.draw( self, screen )

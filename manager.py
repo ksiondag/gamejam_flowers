@@ -20,10 +20,11 @@ def restore_default():
     _current = { k: v for k, v in _DEFAULT.items() }
 
 def update_current( E ):
-    import pprint
     global _current
     for k in E:
         _current[k] = E[k]
+
+    import pprint
     pprint.pprint( _current )
 
 def listens_for( event_key ):

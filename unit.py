@@ -40,7 +40,8 @@ class Unit( object ):
         self.terrain.remove_unit( self )
         Unit.units.remove( self )
 
-    def is_surrounded( self, unit_type=None ):
+    def is_surrounded( self ):
+        unit_type = type( self )
         return (self.terrain.up_terrain()   .contains_unit(unit_type) and
                 self.terrain.down_terrain() .contains_unit(unit_type) and
                 self.terrain.left_terrain() .contains_unit(unit_type) and
@@ -54,9 +55,6 @@ class Unit( object ):
         screen.blit(label, self.terrain)
 
     def draw( self, screen ):
-        pygame.draw.rect( screen, colors.GREEN, self.terrain )
-        self.draw_number( screen )
-
         if self is Unit.active():
             self.terrain.draw_border(screen, colors.RED)
 
@@ -72,7 +70,7 @@ def all():
 
 def turn_end( event ):
     dlist = []
-    for unit in Unit.units:
+    for unit in all():
         if unit.is_surrounded():
             unit.growth -= 2
         unit.growth += 1
