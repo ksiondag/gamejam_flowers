@@ -10,13 +10,16 @@ class Obstical( unit.Unit ):
     
     def __init__( self, terrain ):
         unit.Unit.__init__( self, terrain )
-        self.counter = 0
+        self.active_listeners = {
+            pygame.K_SPACE: self.action_skip,
+        }
     
-    def set_counter(self, grab):
-        self.counter = grab
+    def action_skip( self, event):
+        return True
     
     def draw( self, screen ):
         pygame.draw.rect( screen, colors.BLUE, self.terrain )
+        print self.counter
     
 class Flower( unit.Unit ):
 

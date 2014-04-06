@@ -31,11 +31,16 @@ class Unit( object ):
         Unit.units.appendleft( self )
 
         self.growth = 0
+        self.counter = 0
+        self.hit = 0
         self.terrain = terrain
         self.terrain.add_unit( self )
 
         self.active_listeners = {
         }
+    
+    def set_counter(self, grab):
+        self.counter = grab
 
     def delete( self ):
         self.terrain.remove_unit( self )
@@ -76,18 +81,21 @@ def all():
     return Unit.units
 
 def turn_end( event ):
+    from flower import Flower
     from flower import Obstical
     dlist = []
     for unit in all():
         if unit.is_surrounded():
             unit.growth -= 2
-        unit.growth += (1 * unit.terrain.multiplier)
-        if isinstance (unit, Obstical):
-            unit.counter -= 1
-            if unit.counter < 1:
-                dlist.append(unit)
-        if unit.growth < 1:
+        if isinstance (unit, Flower):
+            unit.growth += (1 * unit.terrain.multiplier - unit.hit)
+        if unit.growth < 1 and isinstance (unit, Obstical) == False:
             dlist.append(unit)
+        if unit.counter > 1:
+            unit.counter -= 1
+            if isinstance (unit, Obstical):
+                if unit.counter < 1:
+                    dlist.append(unit)
     for unit in dlist:
        unit.delete()
 

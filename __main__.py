@@ -35,7 +35,6 @@ def mouse_button_down( event ):
         u.Unit( result )
 
 def key_down( event ):
-
     if m.listens_for( event.key ):
         if m.process( event ):
             u.Unit.activate_next()
