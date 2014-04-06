@@ -33,7 +33,9 @@ class Unit( object ):
     
     def __init__( self, terrain ):
         Unit.units.appendleft( self )
-
+        
+        self.growth = 0
+        self.hit = 0
         self.terrain = terrain
         self.terrain.add_unit( self )
         self.active_listeners = {
@@ -64,15 +66,16 @@ class Unit( object ):
             e.Event( e.DEATH, target=self )
 
     def end_turn( self ):
+        
         pass
 
     def draw_number( self, screen ):
-        return
         myfont = pygame.font.SysFont("monospace", 20)
 
         # render text
         label = myfont.render("%i" % self.growth, 1, colors.BLACK)
         screen.blit(label, self.terrain)
+        return
 
     def draw( self, screen ):
         if self is Unit.active():

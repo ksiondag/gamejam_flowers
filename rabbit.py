@@ -100,11 +100,14 @@ class Rabbit( unit.Unit ):
             self.find_target()
 
     def end_turn( self ):
+        self.growth -= self.hit
+        if self.growth < 1:
+            e.Event(e.DEATH, target = self)
         unit.Unit.end_turn( self )
 
     def draw( self, screen ):
         #pygame.draw.rect( screen, colors.GREY, self.terrain )
-        #self.draw_number( screen )
         screen.blit(colors.RABBIT, self.terrain)
         unit.Unit.draw( self, screen )#Old, restore?
+        self.draw_number( screen )
 

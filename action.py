@@ -32,13 +32,13 @@ class Action( unit.Unit ):
             return False
         elif self.terrain.contains_unit(unit_type = flower.Obstacle):
             return False
-        #elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
-            #self.growth += 2
+        elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
+            self.terrain.say_unit().growth += 2
         else:
             #self.executor.growth -= 2
             flower.Flower( self.terrain )
-            self.delete( None )
-            return True
+        self.delete( None )
+        return True
 
     def action_thorns( self, event ):
         #if self.executor.growth < 3:
@@ -50,32 +50,34 @@ class Action( unit.Unit ):
         else:
             #self.executor.growth -= 3
             unit = flower.Obstacle( self.terrain )
-            #unit.set_counter(3)
+            unit.counter = 3
+            unit.obstacle_type = 't'
+            
             self.delete( None )
             return True
 
     def action_poison( self, event ):
-        return False
         #if self.executor.growth < 3:
             #return False
         if self.terrain.contains_unit(unit_type = flower.Obstacle):
             return False
         elif self.terrain.contains_unit(unit_type = flower.Flower):
-            self.executor.growth -= 3
-            self.set_counter(5)
-            self.set_hit(2)
+            #self.executor.growth -= 3
+            self.terrain.say_unit().counter = 5
+            self.terrain.say_unit().hit = 2
         elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
-            self.executor.growth -= 3
-            self.set_counter(5)
-            self.set_hit(2)
+            #self.executor.growth -=3
+            self.terrain.say_unit().counter = 5
+            self.terrain.say_unit().hit = 2
         else:
-            self.executor.growth -= 3
+            #self.executor.growth -= 3
             unit = flower.Obstacle( self.terrain )
-            unit.set_counter(5)
+            unit.counter = 5
+            unit.obstacle_type = 'p'
             self.terrain.multiplier = 0
 
-            self.delete( None )
-            return True
+        self.delete( None )
+        return True
 
     def action_cancel( self, event ):
         self.delete( None )

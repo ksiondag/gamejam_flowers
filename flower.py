@@ -12,14 +12,10 @@ class Obstacle( unit.Unit ):
     
     def __init__( self, terrain ):
         unit.Unit.__init__( self, terrain )
+        self.obstacle_type = 'n'
         self.active_listeners = {
             pygame.K_SPACE: self.action_skip,
         }
-
-        self.counter = 2
-
-    def set_counter( self, counter ):
-        self.counter = counter
     
     def action_skip( self, event):
         return True
@@ -77,6 +73,9 @@ class Flower( unit.Unit ):
         return True
 
     def end_turn( self ):
+        self.growth += (1 - self.hit)
+        if self.growth < 1:
+            e.Event(e.DEATH, target = self)
         unit.Unit.end_turn( self )
 
     def update( self, dt ):
@@ -85,7 +84,7 @@ class Flower( unit.Unit ):
 
     def draw( self, screen ):
         #pygame.draw.rect( screen, colors.GREEN, self.terrain )
-        #self.draw_number( screen )
         screen.blit(colors.FLOWER, self.terrain)
         unit.Unit.draw( self, screen )
+        self.draw_number( screen )
 
