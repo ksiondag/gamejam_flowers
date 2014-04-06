@@ -1,4 +1,7 @@
 
+import heapq
+import random
+
 import pygame
 
 import ai
@@ -8,6 +11,7 @@ import unit
 import terrain as t
 
 import event as e
+
 
 class Rabbit( unit.Unit ):
 
@@ -24,12 +28,14 @@ class Rabbit( unit.Unit ):
         }
 
         self.wait_time = 1
+        self.turns = 2
 
         self.target = None
 
     def _action_direction( self, action_terrain ):
+        if action_terrain.contains_unit(unit_type = flower.Flower):
+            action_terrain.say_unit().growth -= 4
         ai.Action( action_terrain, self )
-        return False
 
     def action_up( self, event ):
         action_terrain = self.terrain.up_terrain()
@@ -48,7 +54,7 @@ class Rabbit( unit.Unit ):
         return self._action_direction( action_terrain )
     
     def action_skip( self, event):
-        return True
+        e.Event( e.NEXT_ACTIVE )
 
     def distance( self, terrain ):
         row_diff = abs(self.terrain.row - terrain.row)
@@ -61,50 +67,109 @@ class Rabbit( unit.Unit ):
         return terrain2
 
     def find_target( self ):
-        for terrain in t.all():
-            if terrain is not self.terrain and terrain.contains_unit():
-                if self.target is None:
-                    self.target = terrain
-                self.target = self.closer( terrain, self.target )
-                    
+
+        visited = set( [self.terrain] )
+        possibles = [ 
+            (1, [self.terrain.up_terrain()]),
+            (1, [self.terrain.down_terrain()]),
+            (1, [self.terrain.left_terrain()]),
+            (1, [self.terrain.right_terrain()])
+        ]
+        random.shuffle( possibles )
+
+        while self.target is None and len( possibles ) > 0:
+            distance, path = heapq.heappop( possibles )
+            terrain = path[-1]
+            if terrain is None:
+                continue
+            if terrain in visited:
+                continue
+            if terrain.contains_unit( flower.Flower ):
+                self.target = path[0]
+                continue
+            if terrain.contains_unit():
+                continue
+
+            visited.add( terrain )
+
+            new_possibles =  [
+                (distance+1, path + [terrain.up_terrain()]),
+                (distance+1, path + [terrain.down_terrain()]),
+                (distance+1, path + [terrain.left_terrain()]),
+                (distance+1, path + [terrain.right_terrain()]) 
+            ]
+
+            random.shuffle( new_possibles )
+
+            for possible in new_possibles:
+                heapq.heappush( possibles, possible )
+
+    def dying( self ):
+        if self.is_surrounded( type(self) ):
+            e.Event( e.DEATH, target=self )
+            return True
+        if self.terrain.contains_unit( flower.Obstacle ):
+            e.Event( e.DEATH, target=self )
+            return True
+
+        return False
+
+    def initiate_action( self ):
+        if self.target:
+            row_diff = self.target.row - self.terrain.row
+            col_diff = self.target.col - self.terrain.col
+
+            if abs( row_diff ) > abs( col_diff ):
+                if row_diff < 0:
+                    e.Event( e.AI_UP )
+                else:
+                    e.Event( e.AI_DOWN )
+            else:
+                if col_diff < 0:
+                    e.Event( e.AI_LEFT )
+                else:
+                    e.Event( e.AI_RIGHT )
+        else:
+            e.Event( e.AI_SKIP )
+
+        self.target = None
 
     def update( self, dt ):
         unit.Unit.update( self, dt )
-        if self.terrain.contains_unit( flower.Obstacle ):
-            e.Event( e.DEATH, target=self )
+
+        if self.dying():
             return
 
-        if self is not unit.Unit.active(): return
+        if self is not unit.Unit.active():
+            return
+
+        if self.terrain.contains_unit(unit_type = flower.Thorn):
+            self.turns = 0
+
+        if self.turns <= 0:
+            e.Event( e.NEXT_ACTIVE )
+            self.turns = 2
+            return 
+
         self.wait_time -= dt
 
         if self.wait_time < 0:
-            self.wait_time = 1
-            if self.target:
-                row_diff = self.target.row - self.terrain.row
-                col_diff = self.target.col - self.terrain.col
-
-                if abs( row_diff ) > abs( col_diff ):
-                    if row_diff < 0:
-                        e.Event( e.AI_UP )
-                    else:
-                        e.Event( e.AI_DOWN )
-                else:
-                    if col_diff < 0:
-                        e.Event( e.AI_LEFT )
-                    else:
-                        e.Event( e.AI_RIGHT )
-            else:
-                e.Event( e.AI_SKIP )
+            self.wait_time = 0.5
+            self.initiate_action()
+            self.turns -= 1
 
         elif self.target is None:
             self.find_target()
 
     def end_turn( self ):
+        self.growth -= self.hit
+        if self.growth < 1:
+            e.Event(e.DEATH, target = self)
         unit.Unit.end_turn( self )
 
     def draw( self, screen ):
         #pygame.draw.rect( screen, colors.GREY, self.terrain )
-        #self.draw_number( screen )
         screen.blit(colors.RABBIT, self.terrain)
         unit.Unit.draw( self, screen )#Old, restore?
+        self.draw_number( screen )
 

@@ -13,29 +13,40 @@ class Obstacle( unit.Unit ):
     def __init__( self, terrain ):
         unit.Unit.__init__( self, terrain )
         self.active_listeners = {
-            pygame.K_SPACE: self.action_skip,
+            e.AI_SKIP:      self.action_skip
         }
-
-        self.counter = 2
-
-    def set_counter( self, counter ):
-        self.counter = counter
     
     def action_skip( self, event):
-        return True
+        e.Event( e.NEXT_ACTIVE )
 
     def end_turn( self ):
-        print self.counter
+        #print self.counter
         if self.counter >= 1:
             self.counter -= 1
 
     def update( self, dt ):
+        if unit.Unit.active() is self:
+            e.Event( e.AI_SKIP )
         if self.counter <= 0:
             e.Event( e.DEATH, target=self )
     
+        
+class Thorn(Obstacle):
+    def __init__( self, terrain ):
+        Obstacle.__init__(self, terrain)
+
     def draw( self, screen ):
         #pygame.draw.rect( screen, colors.BLUE, self.terrain )
         screen.blit(colors.THORN, self.terrain)
+        unit.Unit.draw( self, screen )
+
+class Poison(Obstacle):
+    def __init__( self, terrain ):
+        Obstacle.__init__(self, terrain)
+
+    def draw( self, screen ):
+        #pygame.draw.rect( screen, colors.BLUE, self.terrain )
+        screen.blit(colors.POISON, self.terrain)
         unit.Unit.draw( self, screen )
     
 class Flower( unit.Unit ):
@@ -51,11 +62,11 @@ class Flower( unit.Unit ):
             pygame.K_SPACE: self.action_skip,
         }
 
-        self.growth = 1
+        self.growth = 5
 
     def _action_direction( self, action_terrain ):
-        action.Action( action_terrain, self )
-        return False
+        if action_terrain is not None:
+            action.Action( action_terrain, self )
 
     def action_up( self, event ):
         action_terrain = self.terrain.up_terrain()
@@ -74,18 +85,24 @@ class Flower( unit.Unit ):
         return self._action_direction( action_terrain )
     
     def action_skip( self, event):
-        return True
+        e.Event( e.NEXT_ACTIVE )
 
     def end_turn( self ):
+        self.growth += (1 - self.hit)
         unit.Unit.end_turn( self )
+        if self.is_surrounded( Flower ):
+            self.growth -= 2
 
     def update( self, dt ):
         if self.terrain.contains_unit( rabbit.Rabbit ):
-            e.Event( e.DEATH, target=self )
+            #e.Event( e.DEATH, target=self )
+            pass
+        if self.growth < 1:
+            e.Event(e.DEATH, target = self)
 
     def draw( self, screen ):
         #pygame.draw.rect( screen, colors.GREEN, self.terrain )
-        #self.draw_number( screen )
         screen.blit(colors.FLOWER, self.terrain)
         unit.Unit.draw( self, screen )
+        self.draw_number( screen )
 

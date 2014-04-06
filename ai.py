@@ -3,6 +3,7 @@ import colors
 import event
 import manager
 import unit
+import flower
 
 DIRECTION = 0
 ACTION = 1
@@ -24,7 +25,7 @@ class Action( unit.Unit ):
         manager.restore_default()
         manager.update_current( unit.Unit.active().active_listeners )
 
-        self.wait = 1
+        self.wait_time = 0.5
 
     def action_move( self, event ):
         self.executor.terrain.remove_unit( self.executor )
@@ -33,12 +34,11 @@ class Action( unit.Unit ):
         self.terrain.add_unit( self.executor )
 
         self.delete( None )
-        unit.Unit.activate_next()
 
     def update( self, dt ):
-        self.wait -= dt
-
-        if self.wait < 0:
+        self.wait_time -= dt
+        
+        if self.wait_time < 0:
             event.Event( event.AI_MOVE )
 
     def draw( self, screen ):
