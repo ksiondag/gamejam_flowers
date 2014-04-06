@@ -102,4 +102,9 @@ def turn_end( event ):
                     dlist.append(unit)
     for unit in dlist:
        unit.delete()
+    for unit in all():
+        if isinstance(unit,Flower):
+            flower_count += 1
+        if isinstance(unit,Rabbit):
+            rabbit_count +=1;
 
