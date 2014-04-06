@@ -41,6 +41,9 @@ class Unit( object ):
     
     def set_counter(self, grab):
         self.counter = grab
+    
+    def set_hit(self, grab):
+        self.hit = grab
 
     def delete( self ):
         self.terrain.remove_unit( self )
@@ -91,10 +94,12 @@ def turn_end( event ):
             unit.growth += (1 * unit.terrain.multiplier - unit.hit)
         if unit.growth < 1 and isinstance (unit, Obstical) == False:
             dlist.append(unit)
+        print unit.counter
         if unit.counter > 1:
             unit.counter -= 1
-            if isinstance (unit, Obstical):
-                if unit.counter < 1:
+            if unit.counter < 1:
+                unit.hit = 0
+                if isinstance (unit, Obstical):
                     dlist.append(unit)
     for unit in dlist:
        unit.delete()

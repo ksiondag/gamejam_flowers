@@ -48,10 +48,6 @@ class Action( unit.Unit ):
             return False
         elif self.terrain.contains_unit(unit_type = flower.Obstical):
             return False
-        elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
-            #create rabit senerio
-            self.delete()
-            return True
         else:
             self.executor.growth -= 3
             unit = flower.Obstical( self.terrain )
@@ -66,21 +62,19 @@ class Action( unit.Unit ):
         elif self.terrain.contains_unit(unit_type = flower.Obstical):
             return False
         elif self.terrain.contains_unit(unit_type = flower.Flower):
-            #create flower senerio
-            
-            self.delete()
-            return True
+            self.executor.growth -= 3
+            self.set_counter(5)
+            self.set_hit(2)
         elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
-            #create rabit senerio
-            
-            self.delete()
-            return True
+            self.executor.growth -= 3
+            self.set_counter(5)
+            self.set_hit(2)
         else:
             self.executor.growth -= 3
             unit = flower.Obstical( self.terrain )
             unit.set_counter(5)
             self.terrain.multiplier = 0
-            #add effects here
+            
         self.delete()
         return True
 
