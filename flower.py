@@ -8,9 +8,15 @@ from terrain import Terrain
 
 class Obstical( unit.Unit ):
     
+    def __init__( self, terrain ):
+        unit.Unit.__init__( self, terrain )
+        self.counter = 0
+    
+    def set_counter(self, grab):
+        self.counter = grab
+    
     def draw( self, screen ):
         pygame.draw.rect( screen, colors.BLUE, self.terrain )
-        
     
 class Flower( unit.Unit ):
 

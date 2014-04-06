@@ -26,6 +26,8 @@ class Action( unit.Unit ):
     def action_seed( self, event ):
         if self.executor.growth < 2:
             return False
+        elif self.terrain.contains_unit(unit_type = flower.Flower):
+            return False
         else:
             self.executor.growth -= 2
             flower.Flower( self.terrain )
@@ -37,7 +39,7 @@ class Action( unit.Unit ):
             return False
         else:
             self.executor.growth -= 3
-            flower.Obstical( self.terrain )
+            flower.Obstical( self.terrain ).set_counter(3)
             #create rabit senerio
         self.delete()
         return True
@@ -47,7 +49,7 @@ class Action( unit.Unit ):
             return False
         else:
             self.executor.growth -= 3
-            flower.Obstical( self.terrain )
+            flower.Obstical( self.terrain ).set_counter(5)
             self.terrain.multiplier = 0
             #add effects here
         self.delete()

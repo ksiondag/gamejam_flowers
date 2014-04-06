@@ -69,11 +69,16 @@ def all():
     return Unit.units
 
 def turn_end( event ):
+    from flower import Obstical
     dlist = []
     for unit in all():
         if unit.is_surrounded():
             unit.growth -= 2
         unit.growth += (1 * unit.terrain.multiplier)
+        if isinstance (unit, Obstical):
+            unit.counter -= 1
+            if unit.counter < 1:
+                dlist.append(unit)
         if unit.growth < 1:
             dlist.append(unit)
     for unit in dlist:
