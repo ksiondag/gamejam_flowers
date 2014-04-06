@@ -49,9 +49,8 @@ class Action( unit.Unit ):
             return False
         else:
             #self.executor.growth -= 3
-            unit = flower.Obstacle( self.terrain )
+            unit = flower.Thorn( self.terrain )
             unit.counter = 3
-            unit.obstacle_type = 't'
             
             self.delete( None )
             return True
@@ -71,9 +70,8 @@ class Action( unit.Unit ):
             self.terrain.say_unit().hit = 2
         else:
             #self.executor.growth -= 3
-            unit = flower.Obstacle( self.terrain )
+            unit = flower.Poison( self.terrain )
             unit.counter = 5
-            unit.obstacle_type = 'p'
 
         self.delete( None )
         return True

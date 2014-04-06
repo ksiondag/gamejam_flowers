@@ -12,7 +12,6 @@ class Obstacle( unit.Unit ):
     
     def __init__( self, terrain ):
         unit.Unit.__init__( self, terrain )
-        self.obstacle_type = 'n'
         self.active_listeners = {
             pygame.K_SPACE: self.action_skip,
         }
@@ -33,6 +32,14 @@ class Obstacle( unit.Unit ):
         #pygame.draw.rect( screen, colors.BLUE, self.terrain )
         screen.blit(colors.THORN, self.terrain)
         unit.Unit.draw( self, screen )
+        
+class Thorn(Obstacle):
+    def __init__( self, terrain ):
+        Obstacle.__init__(self, terrain)
+
+class Poison(Obstacle):
+    def __init__( self, terrain ):
+        Obstacle.__init__(self, terrain)
     
 class Flower( unit.Unit ):
 

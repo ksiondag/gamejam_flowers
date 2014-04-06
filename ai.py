@@ -3,6 +3,7 @@ import colors
 import event
 import manager
 import unit
+import flower
 
 DIRECTION = 0
 ACTION = 1
@@ -37,8 +38,11 @@ class Action( unit.Unit ):
 
     def update( self, dt ):
         self.wait -= dt
-
+        
         if self.wait < 0:
+            if self.terrain.contains_unit(unit_type = flower.Thorn):
+                event.Event( event.AI_SKIP)
+                return
             event.Event( event.AI_MOVE )
 
     def draw( self, screen ):
