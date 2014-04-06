@@ -73,7 +73,7 @@ def turn_end( event ):
     for unit in all():
         if unit.is_surrounded():
             unit.growth -= 2
-        unit.growth += 1
+        unit.growth += (1 * unit.terrain.multiplier)
         if unit.growth < 1:
             dlist.append(unit)
     for unit in dlist:

@@ -28,6 +28,7 @@ class Terrain( pygame.Rect ):
         self.pos = (row, col)
 
         self.units = []
+        self.multiplier = 1
 
         self.row = row
         self.col = col

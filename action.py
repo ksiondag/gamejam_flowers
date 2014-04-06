@@ -24,21 +24,32 @@ class Action( unit.Unit ):
         manager.update_current( unit.Unit.active().active_listeners )
 
     def action_seed( self, event ):
-
         if self.executor.growth < 2:
             return False
         else:
             self.executor.growth -= 2
             flower.Flower( self.terrain )
-        
         self.delete()
         return True
 
     def action_thorns( self, event ):
+        if self.executor.growth < 3:
+            return False
+        else:
+            self.executor.growth -= 3
+            flower.Obstical( self.terrain )
+            #create rabit senerio
         self.delete()
         return True
 
     def action_poison( self, event ):
+        if self.executor.growth < 3:
+            return False
+        else:
+            self.executor.growth -= 3
+            flower.Obstical( self.terrain )
+            self.terrain.multiplier = 0
+            #add effects here
         self.delete()
         return True
 

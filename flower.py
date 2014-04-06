@@ -6,6 +6,12 @@ import colors
 import unit
 from terrain import Terrain
 
+class Obstical( unit.Unit ):
+    
+    def draw( self, screen ):
+        pygame.draw.rect( screen, colors.BLUE, self.terrain )
+        
+    
 class Flower( unit.Unit ):
 
     def __init__( self, terrain ):
