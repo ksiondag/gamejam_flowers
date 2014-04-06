@@ -6,6 +6,7 @@ import flower
 import manager
 from terrain import Terrain
 import unit
+import rabbit
 
 class Action( unit.Unit ):
 
@@ -29,31 +30,51 @@ class Action( unit.Unit ):
             return False
         elif self.terrain.contains_unit(unit_type = flower.Flower):
             return False
+        elif self.terrain.contains_unit(unit_type = flower.Obstical):
+            return False
+        elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
+            self.growth += 2
         else:
             self.executor.growth -= 2
             flower.Flower( self.terrain )
 
-            self.delete()
-            return True
+        self.delete()
+        return True
 
     def action_thorns( self, event ):
         if self.executor.growth < 3:
             return False
+        elif self.terrain.contains_unit(unit_type = flower.Flower):
+            return False
+        elif self.terrain.contains_unit(unit_type = flower.Obstical):
+            return False
         else:
             self.executor.growth -= 3
-            flower.Obstical( self.terrain ).set_counter(3)
-            #create rabit senerio
+            unit = flower.Obstical( self.terrain )
+            unit.set_counter(3)
+            
         self.delete()
         return True
 
     def action_poison( self, event ):
         if self.executor.growth < 3:
             return False
+        elif self.terrain.contains_unit(unit_type = flower.Obstical):
+            return False
+        elif self.terrain.contains_unit(unit_type = flower.Flower):
+            self.executor.growth -= 3
+            self.set_counter(5)
+            self.set_hit(2)
+        elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
+            self.executor.growth -= 3
+            self.set_counter(5)
+            self.set_hit(2)
         else:
             self.executor.growth -= 3
-            flower.Obstical( self.terrain ).set_counter(5)
+            unit = flower.Obstical( self.terrain )
+            unit.set_counter(5)
             self.terrain.multiplier = 0
-            #add effects here
+            
         self.delete()
         return True
 

@@ -12,6 +12,7 @@ class Rabbit( unit.Unit ):
 
     def __init__( self, terrain ):
         unit.Unit.__init__( self, terrain )
+        self.growth = 5
 
         self.active_listeners = {
             event.AI_SKIP:  self.action_skip,
@@ -94,6 +95,6 @@ class Rabbit( unit.Unit ):
 
     def draw( self, screen ):
         pygame.draw.rect( screen, colors.GREY, self.terrain )
-        #self.draw_number( screen )
+        self.draw_number( screen )
         unit.Unit.draw( self, screen )
 
