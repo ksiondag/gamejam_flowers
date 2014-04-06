@@ -1,6 +1,6 @@
 
 from collections import deque
-
+import unit #remove
 import pygame
 
 import colors
@@ -33,7 +33,6 @@ class Unit( object ):
         self.growth = 0
         self.terrain = terrain
         self.terrain.add_unit( self )
-
         self.active_listeners = {
         }
 
