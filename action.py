@@ -30,7 +30,6 @@ class Action( unit.Unit ):
         else:
             self.executor.growth -= 2
             flower.Flower( self.terrain )
-            return True
         
         self.delete()
         return True
