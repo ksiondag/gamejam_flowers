@@ -94,4 +94,3 @@ def all():
 def end_turn( event ):
     for unit in all():
         unit.end_turn()
-

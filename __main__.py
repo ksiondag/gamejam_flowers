@@ -10,6 +10,7 @@ import event as e
 import terrain as t
 import unit as u
 import flower as f
+import rabbit as r
 import manager as m
 
 TITLE = "It's Game Time!"
@@ -93,6 +94,21 @@ def main():
         # Update all units
         for unit in u.all():
             unit.update( dt )
+
+        flower_count = 0
+        rabbit_count = 0
+        for unit in u.all():
+            if isinstance(unit, f.Flower):
+                flower_count += 1
+            if isinstance(unit, r.Rabbit):
+                rabbit_count +=1;
+
+        if rabbit_count == 0:
+            print "You win!"
+            quit( None )
+        if flower_count == 0:
+            print "You lose you loser!"
+            quit( None )
 
         # Redraw screen
         screen.fill(colors.BLACK)
