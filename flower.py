@@ -22,10 +22,10 @@ class Obstacle( unit.Unit ):
         self.counter = counter
     
     def action_skip( self, event):
-        return True
+        e.Event( e.NEXT_ACTIVE )
 
     def end_turn( self ):
-        print self.counter
+        #print self.counter
         if self.counter >= 1:
             self.counter -= 1
 
@@ -58,7 +58,6 @@ class Flower( unit.Unit ):
     def _action_direction( self, action_terrain ):
         if action_terrain is not None:
             action.Action( action_terrain, self )
-        return False
 
     def action_up( self, event ):
         action_terrain = self.terrain.up_terrain()
@@ -77,13 +76,15 @@ class Flower( unit.Unit ):
         return self._action_direction( action_terrain )
     
     def action_skip( self, event):
-        return True
+        e.Event( e.NEXT_ACTIVE )
 
     def end_turn( self ):
         unit.Unit.end_turn( self )
 
     def update( self, dt ):
         if self.terrain.contains_unit( rabbit.Rabbit ):
+            e.Event( e.DEATH, target=self )
+        if self.is_surrounded( Flower ):
             e.Event( e.DEATH, target=self )
 
     def draw( self, screen ):

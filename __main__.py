@@ -37,8 +37,7 @@ def mouse_button_down( event ):
 
 def manage( event ):
     if m.listens_for( event.key ):
-        if m.process( event ):
-            u.Unit.activate_next()
+        m.process( event )
 
 def key_down( event ):
     manage( event )
@@ -101,7 +100,7 @@ def main():
             if isinstance(unit, f.Flower):
                 flower_count += 1
             if isinstance(unit, r.Rabbit):
-                rabbit_count +=1;
+                rabbit_count += 1
 
         # Redraw screen
         screen.fill(colors.BLACK)

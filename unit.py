@@ -15,13 +15,13 @@ class Unit( object ):
     end_of_turn = 0
 
     @classmethod
-    def activate_next( cls ):
+    def activate_next( cls, event ):
         cls.units.rotate(1)
 
         cls.end_of_turn -= 1
         #print cls.end_of_turn
         if cls.end_of_turn <= 0:
-            end_turn( None )
+            e.Event( e.END_TURN )
             cls.end_of_turn = len( cls.units )
 
         manager.restore_default()
@@ -88,13 +88,15 @@ class Unit( object ):
 
 def init():
     import flower
-    flower.Flower( Terrain.grid[4][4] )
+    flower.Flower( Terrain.grid[0][0] )
 
     import rabbit
-    rabbit.Rabbit( Terrain.grid[5][5] )
+    rabbit.Rabbit( Terrain.grid[8][9] )
+    rabbit.Rabbit( Terrain.grid[9][8] )
 
-    Unit.end_of_turn = 2
-    Unit.activate_next()
+    #Unit.end_of_turn = 2
+    manager.restore_default()
+    manager.update_current( Unit.active().active_listeners )
 
 def all():
     return Unit.units

@@ -2,6 +2,7 @@
 import pygame
 
 import colors
+import event as e
 import flower
 import manager
 from terrain import Terrain
@@ -27,39 +28,39 @@ class Action( unit.Unit ):
 
     def action_seed( self, event ):
         #if self.executor.growth < 2:
-            #return False
+            #return
         if self.terrain.contains_unit(unit_type = flower.Flower):
-            return False
+            return
         elif self.terrain.contains_unit(unit_type = flower.Obstacle):
-            return False
+            return
         #elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
             #self.growth += 2
         else:
             #self.executor.growth -= 2
             flower.Flower( self.terrain )
             self.delete( None )
-            return True
+            e.Event( e.NEXT_ACTIVE )
 
     def action_thorns( self, event ):
         #if self.executor.growth < 3:
-            #return False
+            #return
         if self.terrain.contains_unit(unit_type = flower.Flower):
-            return False
+            return
         elif self.terrain.contains_unit(unit_type = flower.Obstacle):
-            return False
+            return
         else:
             #self.executor.growth -= 3
             unit = flower.Obstacle( self.terrain )
             #unit.set_counter(3)
             self.delete( None )
-            return True
+            e.Event( e.NEXT_ACTIVE )
 
     def action_poison( self, event ):
-        return False
+        return
         #if self.executor.growth < 3:
-            #return False
+            #return
         if self.terrain.contains_unit(unit_type = flower.Obstacle):
-            return False
+            return
         elif self.terrain.contains_unit(unit_type = flower.Flower):
             self.executor.growth -= 3
             self.set_counter(5)
@@ -75,15 +76,13 @@ class Action( unit.Unit ):
             self.terrain.multiplier = 0
 
             self.delete( None )
-            return True
+            e.Event( e.NEXT_ACTIVE )
 
     def action_cancel( self, event ):
         self.delete( None )
 
         manager.restore_default()
         manager.update_current( unit.Unit.active().active_listeners )
-
-        return False
 
     def draw( self, screen ):
         if self is unit.Unit.active():

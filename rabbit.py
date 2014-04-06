@@ -34,7 +34,6 @@ class Rabbit( unit.Unit ):
 
     def _action_direction( self, action_terrain ):
         ai.Action( action_terrain, self )
-        return False
 
     def action_up( self, event ):
         action_terrain = self.terrain.up_terrain()
@@ -53,7 +52,7 @@ class Rabbit( unit.Unit ):
         return self._action_direction( action_terrain )
     
     def action_skip( self, event):
-        return True
+        e.Event( e.NEXT_ACTIVE )
 
     def distance( self, terrain ):
         row_diff = abs(self.terrain.row - terrain.row)
@@ -69,34 +68,39 @@ class Rabbit( unit.Unit ):
 
         visited = set( [self.terrain] )
         possibles = [ 
-            (1, self.terrain.up_terrain()),
-            (1, self.terrain.down_terrain()),
-            (1, self.terrain.left_terrain()),
-            (1, self.terrain.right_terrain())
+            (1, [self.terrain.up_terrain()]),
+            (1, [self.terrain.down_terrain()]),
+            (1, [self.terrain.left_terrain()]),
+            (1, [self.terrain.right_terrain()])
         ]
         random.shuffle( possibles )
 
         while self.target is None and len( possibles ) > 0:
-            #print len( visited )
-            distance, terrain = heapq.heappop( possibles )
+            distance, path = heapq.heappop( possibles )
+            terrain = path[-1]
             if terrain is None:
                 continue
             if terrain in visited:
                 continue
             if terrain.contains_unit( flower.Flower ):
-                self.target = terrain
+                self.target = path[0]
                 continue
             if terrain.contains_unit():
                 continue
 
             visited.add( terrain )
 
-            heapq.heappush( possibles, (distance+1, terrain.up_terrain()) )
-            heapq.heappush( possibles, (distance+1, terrain.down_terrain()) )
-            heapq.heappush( possibles, (distance+1, terrain.left_terrain()) )
-            heapq.heappush( possibles, (distance+1,  terrain.right_terrain()) )
+            new_possibles =  [
+                (distance+1, path + [terrain.up_terrain()]),
+                (distance+1, path + [terrain.down_terrain()]),
+                (distance+1, path + [terrain.left_terrain()]),
+                (distance+1, path + [terrain.right_terrain()]) 
+            ]
 
-        print
+            random.shuffle( new_possibles )
+
+            for possible in new_possibles:
+                heapq.heappush( possibles, possible )
 
     def dying( self ):
         if self.is_surrounded( type(self) ):
@@ -138,7 +142,7 @@ class Rabbit( unit.Unit ):
             return
 
         if self.turns <= 0:
-            unit.Unit.activate_next()
+            e.Event( e.NEXT_ACTIVE )
             self.turns = 2
             return 
 
@@ -147,6 +151,7 @@ class Rabbit( unit.Unit ):
         if self.wait_time < 0:
             self.wait_time = 0.5
             self.initiate_action()
+            self.turns -= 1
 
         elif self.target is None:
             self.find_target()
