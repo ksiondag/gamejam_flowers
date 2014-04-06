@@ -32,7 +32,7 @@ class Action( unit.Unit ):
         self.executor.terrain = self.terrain
         self.terrain.add_unit( self.executor )
 
-        self.delete()
+        self.delete( None )
         unit.Unit.activate_next()
 
     def update( self, dt ):

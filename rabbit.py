@@ -3,10 +3,11 @@ import pygame
 
 import ai
 import colors
+import flower
 import unit
 import terrain as t
 
-import event
+import event as e
 
 class Rabbit( unit.Unit ):
 
@@ -15,11 +16,11 @@ class Rabbit( unit.Unit ):
         self.growth = 5
 
         self.active_listeners = {
-            event.AI_SKIP:  self.action_skip,
-            event.AI_LEFT:  self.action_left,
-            event.AI_RIGHT: self.action_right,
-            event.AI_UP:    self.action_up,
-            event.AI_DOWN:  self.action_down
+            e.AI_SKIP:  self.action_skip,
+            e.AI_LEFT:  self.action_left,
+            e.AI_RIGHT: self.action_right,
+            e.AI_UP:    self.action_up,
+            e.AI_DOWN:  self.action_down
         }
 
         self.wait_time = 1
@@ -68,6 +69,11 @@ class Rabbit( unit.Unit ):
                     
 
     def update( self, dt ):
+        unit.Unit.update( self, dt )
+        if self.terrain.contains_unit( flower.Obstacle ):
+            e.Event( e.DEATH, target=self )
+            return
+
         if self is not unit.Unit.active(): return
         self.wait_time -= dt
 
@@ -79,19 +85,22 @@ class Rabbit( unit.Unit ):
 
                 if abs( row_diff ) > abs( col_diff ):
                     if row_diff < 0:
-                        event.Event( event.AI_UP )
+                        e.Event( e.AI_UP )
                     else:
-                        event.Event( event.AI_DOWN )
+                        e.Event( e.AI_DOWN )
                 else:
                     if col_diff < 0:
-                        event.Event( event.AI_LEFT )
+                        e.Event( e.AI_LEFT )
                     else:
-                        event.Event( event.AI_RIGHT )
+                        e.Event( e.AI_RIGHT )
             else:
-                event.Event( event.AI_SKIP )
+                e.Event( e.AI_SKIP )
 
         elif self.target is None:
             self.find_target()
+
+    def end_turn( self ):
+        unit.Unit.end_turn( self )
 
     def draw( self, screen ):
         pygame.draw.rect( screen, colors.GREY, self.terrain )#old, restore?

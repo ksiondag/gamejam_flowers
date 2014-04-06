@@ -1,10 +1,15 @@
 
+# AI events
 AI_LEFT  = 1000
 AI_RIGHT = 1001
 AI_UP    = 1002
 AI_DOWN  = 1003
 AI_MOVE  = 1004
 AI_SKIP  = 1005
+
+# Turn events
+END_TURN = 1006
+DEATH    = 1007
 
 class Event(object):
 
@@ -17,8 +22,9 @@ class Event(object):
 
         return events
 
-    def __init__( self, key, **kwargs ):
+    def __init__( self, key, target=None, **kwargs ):
         self.key = key
+        self.target = target
 
         for k, v in kwargs.items():
             setattr(self, k, v )

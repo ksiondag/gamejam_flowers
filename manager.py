@@ -1,6 +1,7 @@
 
 import pygame
 
+import event
 import unit
 
 _DEFAULT = {
@@ -24,17 +25,19 @@ def update_current( E ):
     for k in E:
         _current[k] = E[k]
 
-    #import pprint
-    #pprint.pprint( _current )
-
 def listens_for( event_key ):
     return event_key in _current
 
 def process( event ):
     return _current[ event.key ]( event )
 
+def special_delivery( event ):
+    if event.key in event.target.specific_listeners:
+        event.target.specific_listeners[event.key](event)
+
 def init():
     default = {
+        event.END_TURN: unit.end_turn( event )        
     }
     set_default( default )
 

@@ -34,16 +34,19 @@ def mouse_button_down( event ):
         return
         u.Unit( result )
 
-def key_down( event ):
+def manage( event ):
     if m.listens_for( event.key ):
         if m.process( event ):
             u.Unit.activate_next()
 
-def ai_process( event ):
-    
-    if m.listens_for( event.key ):
-        if m.process( event ):
-            u.Unit.activate_next()
+def key_down( event ):
+    manage( event )
+
+def trigger_process( event ):
+    if not event.target:
+        manage( event )
+    else:
+        m.special_delivery( event )
 
 def init():
     pygame.init()
@@ -85,7 +88,7 @@ def main():
             process[event.type]( event )
 
         for event in e.Event.get():
-            ai_process( event )
+            trigger_process( event )
 
         # Update all units
         for unit in u.all():

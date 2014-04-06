@@ -3,23 +3,39 @@ import pygame
 
 import action
 import colors
+import event as e
 import unit
 from terrain import Terrain
+import rabbit
 
-class Obstical( unit.Unit ):
+class Obstacle( unit.Unit ):
     
     def __init__( self, terrain ):
         unit.Unit.__init__( self, terrain )
         self.active_listeners = {
             pygame.K_SPACE: self.action_skip,
         }
+
+        self.counter = 1
+
+    def set_counter( self, counter ):
+        self.counter = counter
     
     def action_skip( self, event):
         return True
+
+    def end_turn( self ):
+        if self.counter > 1:
+            self.counter -= 1
+        if self.counter < 0:
+            Event( event.DEATH, target=unit )
+
+    def update( self, dt ):
+        pass
     
     def draw( self, screen ):
         pygame.draw.rect( screen, colors.BLUE, self.terrain )
-        print self.counter
+        unit.Unit.draw( self, screen )
     
 class Flower( unit.Unit ):
 
@@ -33,6 +49,8 @@ class Flower( unit.Unit ):
             pygame.K_RIGHT: self.action_right,
             pygame.K_SPACE: self.action_skip,
         }
+
+        self.growth = 1
 
     def _action_direction( self, action_terrain ):
         action.Action( action_terrain, self )
@@ -56,6 +74,13 @@ class Flower( unit.Unit ):
     
     def action_skip( self, event):
         return True
+
+    def end_turn( self ):
+        unit.Unit.end_turn( self )
+
+    def update( self, dt ):
+        if self.terrain.contains_unit( rabbit.Rabbit ):
+            e.Event( e.DEATH, target=self )
 
     def draw( self, screen ):
         pygame.draw.rect( screen, colors.GREEN, self.terrain )

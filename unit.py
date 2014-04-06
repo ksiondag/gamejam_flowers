@@ -4,6 +4,7 @@ import unit #remove
 import pygame
 
 import colors
+import event as e
 from terrain import Terrain
 
 import manager
@@ -18,8 +19,9 @@ class Unit( object ):
         cls.units.rotate(1)
 
         cls.end_of_turn -= 1
+        #print cls.end_of_turn
         if cls.end_of_turn <= 0:
-            turn_end( None )
+            end_turn( None )
             cls.end_of_turn = len( cls.units )
 
         manager.restore_default()
@@ -32,23 +34,24 @@ class Unit( object ):
     def __init__( self, terrain ):
         Unit.units.appendleft( self )
 
-        self.growth = 0
-        self.counter = 0
-        self.hit = 0
         self.terrain = terrain
         self.terrain.add_unit( self )
         self.active_listeners = {
         }
-    
-    def set_counter(self, grab):
-        self.counter = grab
-    
-    def set_hit(self, grab):
-        self.hit = grab
 
-    def delete( self ):
+        self.specific_listeners = {
+            e.DEATH: self.delete
+        }
+
+    def add_listener( event_key, function ):
+        self.specific_listeners[ event_key ] = function
+    
+    def delete( self, event ):
         self.terrain.remove_unit( self )
         Unit.units.remove( self )
+
+        manager.restore_default()
+        manager.update_current( Unit.active().active_listeners )
 
     def is_surrounded( self, unit_type=None ):
         return (self.terrain.up_terrain()   .contains_unit(unit_type) and
@@ -57,9 +60,14 @@ class Unit( object ):
                 self.terrain.right_terrain().contains_unit(unit_type)    )
 
     def update( self, dt ):
+        if self.is_surrounded( type(self) ):
+            e.Event( e.DEATH, target=self )
+
+    def end_turn( self ):
         pass
 
     def draw_number( self, screen ):
+        return
         myfont = pygame.font.SysFont("monospace", 20)
 
         # render text
@@ -77,29 +85,13 @@ def init():
     import rabbit
     rabbit.Rabbit( Terrain.grid[5][5] )
 
+    Unit.end_of_turn = 2
     Unit.activate_next()
 
 def all():
     return Unit.units
 
-def turn_end( event ):
-    from flower import Flower
-    from flower import Obstical
-    dlist = []
+def end_turn( event ):
     for unit in all():
-        if unit.is_surrounded():
-            unit.growth -= 2
-        if isinstance (unit, Flower):
-            unit.growth += (1 * unit.terrain.multiplier - unit.hit)
-        if unit.growth < 1 and isinstance (unit, Obstical) == False:
-            dlist.append(unit)
-        print unit.counter
-        if unit.counter > 1:
-            unit.counter -= 1
-            if unit.counter < 1:
-                unit.hit = 0
-                if isinstance (unit, Obstical):
-                    dlist.append(unit)
-    for unit in dlist:
-       unit.delete()
+        unit.end_turn()
 

@@ -26,40 +26,39 @@ class Action( unit.Unit ):
         manager.update_current( unit.Unit.active().active_listeners )
 
     def action_seed( self, event ):
-        if self.executor.growth < 2:
+        #if self.executor.growth < 2:
+            #return False
+        if self.terrain.contains_unit(unit_type = flower.Flower):
             return False
-        elif self.terrain.contains_unit(unit_type = flower.Flower):
+        elif self.terrain.contains_unit(unit_type = flower.Obstacle):
             return False
-        elif self.terrain.contains_unit(unit_type = flower.Obstical):
-            return False
-        elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
-            self.growth += 2
+        #elif self.terrain.contains_unit(unit_type = rabbit.Rabbit):
+            #self.growth += 2
         else:
-            self.executor.growth -= 2
+            #self.executor.growth -= 2
             flower.Flower( self.terrain )
-
-        self.delete()
-        return True
+            self.delete( None )
+            return True
 
     def action_thorns( self, event ):
-        if self.executor.growth < 3:
+        #if self.executor.growth < 3:
+            #return False
+        if self.terrain.contains_unit(unit_type = flower.Flower):
             return False
-        elif self.terrain.contains_unit(unit_type = flower.Flower):
-            return False
-        elif self.terrain.contains_unit(unit_type = flower.Obstical):
+        elif self.terrain.contains_unit(unit_type = flower.Obstacle):
             return False
         else:
-            self.executor.growth -= 3
-            unit = flower.Obstical( self.terrain )
-            unit.set_counter(3)
-            
-        self.delete()
-        return True
+            #self.executor.growth -= 3
+            unit = flower.Obstacle( self.terrain )
+            #unit.set_counter(3)
+            self.delete( None )
+            return True
 
     def action_poison( self, event ):
-        if self.executor.growth < 3:
-            return False
-        elif self.terrain.contains_unit(unit_type = flower.Obstical):
+        return False
+        #if self.executor.growth < 3:
+            #return False
+        if self.terrain.contains_unit(unit_type = flower.Obstacle):
             return False
         elif self.terrain.contains_unit(unit_type = flower.Flower):
             self.executor.growth -= 3
@@ -71,15 +70,15 @@ class Action( unit.Unit ):
             self.set_hit(2)
         else:
             self.executor.growth -= 3
-            unit = flower.Obstical( self.terrain )
+            unit = flower.Obstacle( self.terrain )
             unit.set_counter(5)
             self.terrain.multiplier = 0
-            
-        self.delete()
-        return True
+
+            self.delete( None )
+            return True
 
     def action_cancel( self, event ):
-        self.delete()
+        self.delete( None )
 
         manager.restore_default()
         manager.update_current( unit.Unit.active().active_listeners )
