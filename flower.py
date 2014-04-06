@@ -58,3 +58,4 @@ class Flower( unit.Unit ):
         pygame.draw.rect( screen, colors.GREEN, self.terrain )
         self.draw_number( screen )
         unit.Unit.draw( self, screen )
+

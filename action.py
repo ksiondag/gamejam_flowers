@@ -1,6 +1,7 @@
 
 import pygame
 
+import colors
 import flower
 import manager
 from terrain import Terrain
@@ -31,8 +32,9 @@ class Action( unit.Unit ):
         else:
             self.executor.growth -= 2
             flower.Flower( self.terrain )
-        self.delete()
-        return True
+
+            self.delete()
+            return True
 
     def action_thorns( self, event ):
         if self.executor.growth < 3:
@@ -62,4 +64,9 @@ class Action( unit.Unit ):
         manager.update_current( unit.Unit.active().active_listeners )
 
         return False
+
+    def draw( self, screen ):
+        if self is unit.Unit.active():
+            self.terrain.draw_border(screen, colors.BLUE)
+            self.executor.terrain.draw_border(screen, colors.RED)
 
