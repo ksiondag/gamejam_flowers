@@ -4,17 +4,20 @@ import pygame
 import action
 import colors
 import event as e
-import unit
-from terrain import Terrain
+import manager
 import rabbit
+from terrain import Terrain
+import unit
 
 class Obstacle( unit.Unit ):
     
     def __init__( self, terrain ):
         unit.Unit.__init__( self, terrain )
-        self.active_listeners = {
-            e.AI_SKIP:      self.action_skip
-        }
+
+        self.active_listeners = manager.init_listener()
+        self.active_listeners.update( [
+            (e.AI_SKIP,      self.action_skip)
+        ] )
     
     def action_skip( self, event):
         e.Event( e.NEXT_ACTIVE )
@@ -36,7 +39,6 @@ class Thorn(Obstacle):
         Obstacle.__init__(self, terrain)
 
     def draw( self, screen ):
-        #pygame.draw.rect( screen, colors.BLUE, self.terrain )
         screen.blit(colors.THORN, self.terrain)
         unit.Unit.draw( self, screen )
 
@@ -45,7 +47,6 @@ class Poison(Obstacle):
         Obstacle.__init__(self, terrain)
 
     def draw( self, screen ):
-        #pygame.draw.rect( screen, colors.BLUE, self.terrain )
         screen.blit(colors.POISON, self.terrain)
         unit.Unit.draw( self, screen )
     
@@ -54,13 +55,14 @@ class Flower( unit.Unit ):
     def __init__( self, terrain ):
         unit.Unit.__init__( self, terrain )
 
-        self.active_listeners = {
-            pygame.K_UP:    self.action_up,
-            pygame.K_DOWN:  self.action_down,
-            pygame.K_LEFT:  self.action_left,
-            pygame.K_RIGHT: self.action_right,
-            pygame.K_SPACE: self.action_skip,
-        }
+        self.active_listeners = manager.init_listener()
+        self.active_listeners.update( [
+            (e.FLOWER_UP,    self.action_up),
+            (e.FLOWER_DOWN,  self.action_down),
+            (e.FLOWER_LEFT,  self.action_left),
+            (e.FLOWER_RIGHT, self.action_right),
+            (e.FLOWER_SKIP,  self.action_skip),
+        ] )
 
         self.growth = 5
 
@@ -101,7 +103,6 @@ class Flower( unit.Unit ):
             e.Event(e.DEATH, target = self)
 
     def draw( self, screen ):
-        #pygame.draw.rect( screen, colors.GREEN, self.terrain )
         screen.blit(colors.FLOWER, self.terrain)
         unit.Unit.draw( self, screen )
         self.draw_number( screen )

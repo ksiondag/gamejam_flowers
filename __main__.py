@@ -2,51 +2,17 @@
 
 import pygame
 
-import collections
-import sys
-
 import colors
+import flower as f
 import event as e
+import manager as m
+import rabbit as r
 import terrain as t
 import unit as u
-import flower as f
-import rabbit as r
-import manager as m
 
 TITLE = "It's Game Time!"
 
 FPS = 60
-
-def do_nothing( event ):
-    return
-
-def quit( event ):
-    pygame.quit()
-    sys.exit()
-
-def mouse_motion( event ):
-    result = t.collision( event.pos )
-    if result is not None:
-        result.set_highlight()
-
-def mouse_button_down( event ):
-    result = t.collision( event.pos )
-    if result is not None:
-        return
-        u.Unit( result )
-
-def manage( event ):
-    if m.listens_for( event.key ):
-        m.process( event )
-
-def key_down( event ):
-    manage( event )
-
-def trigger_process( event ):
-    if not event.target:
-        manage( event )
-    else:
-        m.special_delivery( event )
 
 def init():
     pygame.init()
@@ -56,6 +22,7 @@ def init():
     u.init()
         
 def main():
+    # Initialize everything
     init()
 
     # Setup the screen
@@ -70,25 +37,16 @@ def main():
     screen.fill(colors.BLACK)
     pygame.display.flip()
 
-    # Event managing dictionary
-    # For events we do not process, we are defaulting to doing nothing
-    process = collections.defaultdict( lambda: do_nothing )
-    process.update( [
-        (pygame.QUIT,               quit),
-        #(pygame.MOUSEMOTION,        mouse_motion),
-        (pygame.MOUSEBUTTONDOWN,    mouse_button_down),
-        (pygame.KEYDOWN,            key_down)
-    ] )
 
     while True:
         dt = clock.tick( FPS ) / 1000.
 
         # Handle events and change state as necessary
         for event in pygame.event.get():
-            process[event.type]( event )
+            m.process( event )
 
         for event in e.Event.get():
-            trigger_process( event )
+            m.process( event )
 
         # Update all units
         for unit in u.all():
@@ -109,6 +67,8 @@ def main():
         for unit in u.all():
             unit.draw(screen)
         pygame.display.flip()
+
+        # End game condition
         if rabbit_count == 0:
             pygame.font.init()
             font = pygame.font.SysFont("Monospace",100)
@@ -116,7 +76,7 @@ def main():
             screen.blit(win,(0,0))#self.terain
             pygame.display.flip()
             pygame.time.wait(5000)
-            quit( None )
+            m.quit( None )
         if flower_count == 0:
             pygame.font.init()
             font = pygame.font.SysFont("Monospace",100)
@@ -124,7 +84,7 @@ def main():
             screen.blit(lose,(0,0))#self.terain
             pygame.display.flip()
             pygame.time.wait(5000)
-            quit( None )
+            m.quit( None )
 
 if __name__ == '__main__':
     main()

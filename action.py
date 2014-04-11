@@ -14,12 +14,13 @@ class Action( unit.Unit ):
     def __init__( self, terrain, executor ):
         unit.Unit.__init__( self, terrain )
 
-        self.active_listeners = {
-            pygame.K_s:         self.action_seed,
-            pygame.K_t:         self.action_thorns,
-            pygame.K_p:         self.action_poison,
-            pygame.K_BACKSPACE: self.action_cancel
-        }
+        self.active_listeners = manager.init_listener()
+        self.active_listeners.update( [
+            (e.FLOWER_SEED,         self.action_seed),
+            (e.FLOWER_THORN,        self.action_thorns),
+            (e.FLOWER_POISON,       self.action_poison),
+            (e.FLOWER_CANCEL,       self.action_cancel),
+        ] )
 
         self.executor = executor
 
@@ -27,8 +28,6 @@ class Action( unit.Unit ):
         manager.update_current( unit.Unit.active().active_listeners )
 
     def action_seed( self, event ):
-        #if self.executor.growth < 2:
-            #return
         if self.terrain.contains_unit(unit_type = flower.Flower):
             return
         elif self.terrain.contains_unit(unit_type = flower.Obstacle):
